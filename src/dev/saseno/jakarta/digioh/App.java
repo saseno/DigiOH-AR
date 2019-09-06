@@ -40,7 +40,7 @@ import jp.nyatla.nyartoolkit.markersystem.NyARSensor;
 public class App extends GlSketch {
 
 	protected boolean useCamera = false;
-	protected boolean mirror = false;
+	protected boolean mirror = true;
 	
 	private Webcam camera;
 	

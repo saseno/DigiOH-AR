@@ -50,6 +50,8 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 			try {
 				java.util.List modes = ScreenResSelector.getAvailableDisplayModes();
 				newMode = (DisplayMode) modes.get(modes.size() - 1);
+				cameraDimension.setSize(newMode.getWidth(), newMode.getHeight());
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 

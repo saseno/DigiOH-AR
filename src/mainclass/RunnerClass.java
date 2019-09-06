@@ -4,7 +4,6 @@ import dev.saseno.jakarta.digioh.App;
 
 public class RunnerClass extends App {
 
-	protected boolean useCamera = false;
 	protected boolean mirror = true;
 	
 	public RunnerClass(int i_width, int i_height, boolean useCamera) {
@@ -21,7 +20,7 @@ public class RunnerClass extends App {
 		int w0 = 320;
 		int h0 = 240;
 		
-		boolean userInputCamera = false;
+		boolean userInputCamera = true;
 		
 		for (String arg : args) {
 			if ("camera".equals(arg.trim())) {
