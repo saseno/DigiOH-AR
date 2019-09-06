@@ -1,6 +1,4 @@
 
 bin/
 
-target/data/
-
-target/natives/
+target/
