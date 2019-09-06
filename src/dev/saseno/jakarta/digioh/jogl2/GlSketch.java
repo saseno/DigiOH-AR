@@ -1,5 +1,6 @@
 package dev.saseno.jakarta.digioh.jogl2;
 
+import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -7,6 +8,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -19,22 +21,25 @@ import com.jogamp.opengl.util.Animator;
 import dev.saseno.jakarta.digioh.io.utils.ScreenResSelector;
 import jp.nyatla.nyartoolkit.core.types.NyARIntSize;
 
-public abstract class GlSketch implements GLEventListener, KeyListener {
+public abstract class GlSketch implements GLEventListener, KeyListener, MouseListener {
 
 	private Frame frame;
 	protected GLCanvas canvas;
+	protected Dimension cameraDimension = new Dimension();
 
 	private boolean _is_setup_done = false;
 	private GraphicsDevice dev;
 
-	protected int i_width = 320;
-	protected int i_height = 240;
+//	protected int i_width = 320;
+//	protected int i_height = 240;
 	
 	private static final String TITLE = "DigiOH - Augmented Reality";
 
 	public GlSketch(int i_width, int i_height) {
-		this.i_width = i_width;
-		this.i_height = i_height;
+//		this.i_width = i_width;		
+//		this.i_height = i_height;
+		
+		cameraDimension.setSize(i_width, i_height);
 	}
 
 	public void run2() {
@@ -50,8 +55,11 @@ public abstract class GlSketch implements GLEventListener, KeyListener {
 
 				newMode = ScreenResSelector.showSelectionDialog();
 				if (newMode != null) {
-					i_width = newMode.getWidth();
-					i_height = newMode.getHeight();
+					
+					//i_width = newMode.getWidth();
+					//i_height = newMode.getHeight();
+					
+					cameraDimension.setSize(newMode.getWidth(), newMode.getHeight());
 				}
 			}
 		} else {
@@ -66,8 +74,9 @@ public abstract class GlSketch implements GLEventListener, KeyListener {
 		canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(this);
+		canvas.addMouseListener(this);
 		
-		frame.setSize(i_width, i_height);
+		frame.setSize(cameraDimension.width, cameraDimension.height);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
@@ -91,7 +100,8 @@ public abstract class GlSketch implements GLEventListener, KeyListener {
 						f2.setVisible(false);
 						f2.setUndecorated(false);
 						f2.setVisible(true);
-						f2.setSize(i_width, i_height);
+						f2.setSize(cameraDimension.width, cameraDimension.height);
+						f2.toFront();
 						
 					});
 				} catch (Exception e) {
@@ -113,9 +123,11 @@ public abstract class GlSketch implements GLEventListener, KeyListener {
 
 		canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
+		canvas.addKeyListener(this);
+		canvas.addMouseListener(this);
 
-		frame.setSize(i_width, i_height);
-		canvas.setBounds(0, 0, i_width, i_height);
+		frame.setSize(cameraDimension.width, cameraDimension.height);
+		canvas.setBounds(0, 0, cameraDimension.width, cameraDimension.height);
 
 		frame.add(canvas);
 		frame.setVisible(true);
@@ -125,11 +137,10 @@ public abstract class GlSketch implements GLEventListener, KeyListener {
 		frame.setTitle(i_title);
 	}
 
-	public void size(NyARIntSize i_s) {
-		size(i_s.w, i_s.h);
-	}
-
 	public void size(int i_w, int i_h) {
+		
+		cameraDimension.setSize(i_w, i_h);
+		
 		Insets ins = frame.getInsets();
 		frame.setSize(i_w + ins.left + ins.right, i_h + ins.top + ins.bottom);
 		canvas.setBounds(ins.left, ins.top, i_w, i_h);
@@ -160,8 +171,10 @@ public abstract class GlSketch implements GLEventListener, KeyListener {
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		gl.glViewport(0, 0, width, height);
 		
-		i_width = width;
-		i_height = height;
+		//i_width = width;
+		//i_height = height;
+		
+		cameraDimension.setSize(width, height);
 
 		return;
 	}

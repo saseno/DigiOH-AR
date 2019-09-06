@@ -11,14 +11,14 @@ public class Love extends GLModel {
 	private static final String objectName = "/obj/love/Love.obj";
 	private static final String textureName = null;
 	
-	private float fSize = 1f;
+	private float fSize = 1.5f;
 	
 	protected float[] mat_ambient 		= { 0.8f, 0.0f, 0.0f, 1.0f };
 	protected float[] mat_ambient_color = { 0.3f, 0.0f, 0.0f, 1.0f };
 	protected float[] mat_diffuse 		= { 0.3f, 0.2f, 0.2f, 1.0f };
 	protected float[] mat_specular 		= { 0.3f, 0.0f, 0.0f, 1.0f };
 
-	protected float shininess = 1.0f;
+	protected float shininess = 2.0f;
 	
 	public Love() {
 		super(objectName, textureName);
@@ -36,7 +36,7 @@ public class Love extends GLModel {
 		initTexture(i_gl.getGL2());
 		
 		for (Face face : faces) {
-			face.draw(i_gl, 1.5f);
+			face.draw(i_gl, fSize);
 		}
 		
 		disabledTexture(i_gl.getGL2());		
@@ -46,17 +46,17 @@ public class Love extends GLModel {
 	protected void initTexture(GL2 gl) {
 		try {
 		        
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, new float[] { 0.0f, 0.0f, 0.0f, 1.0f }, 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, new float[] { 0.0f, 0.0f, 0.0f, 1.0f }, 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, new float[] { 0.0f, 0.0f, 0.0f, 1.0f }, 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_EMISSION, new float[] { 0.0f, 0.0f, 0.0f, 1.0f }, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, mat_ambient, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, mat_ambient_color, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, mat_diffuse, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_EMISSION, mat_specular, 0);
 
-			gl.glMaterialf(GL.GL_FRONT, GL2.GL_SHININESS, 0f);
+			gl.glMaterialf(GL.GL_FRONT, GL2.GL_SHININESS, shininess);
 
 			gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
 			gl.glDisable(GL2.GL_TEXTURE_2D);
 
-			gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, 1);
+//			gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, 1);
 
 			gl.glEnable(GL2.GL_LIGHT0);
 			gl.glEnable(GL2.GL_LIGHTING);

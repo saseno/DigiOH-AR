@@ -59,7 +59,7 @@ public class NyARGlRender implements INyARSingleCameraSystemObserver {
 		return;
 	}
 
-	public final void drawBackground(GL i_gl, INyARRgbRaster i_bg_image, boolean mirror, int width, int height) throws NyARRuntimeException {
+	public final void drawBackground(GL i_gl, INyARRgbRaster i_bg_image, boolean mirror, double width, double height) throws NyARRuntimeException {
 		i_gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT); // Clear the buffers for new frame.
 		NyARGLDrawUtil.drawBackGround(i_gl, i_bg_image, 1.0, mirror, width, height);
 	}

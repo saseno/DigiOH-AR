@@ -13,12 +13,12 @@ public class Client extends GLModel {
 	
 	private float fSize = 50f;
 		
-	protected float[] mat_ambient_color = { 0.1f, 0.1f, 0.8f, 1.0f };
-	protected float[] mat_diffuse 		= { 0.0f, 0.0f, 0.7f, 1.0f };
-	protected float[] mat_specular 		= { 0.0f, 0.0f, 0.7f, 1.0f };
-	protected float[] mat_emission 		= { 0.0f, 0.0f, 0.0f, 1.0f };
+	protected float[] mat_ambient_color = { 0.1f, 0.1f, 0.2f, 1.0f };
+	protected float[] mat_diffuse 		= { 0.0f, 0.0f, 0.1f, 1.0f };
+	protected float[] mat_specular 		= { 0.0f, 0.0f, 0.1f, 1.0f };
+	protected float[] mat_emission 		= { 0.0f, 0.0f, 0.2f, 1.0f };
 
-	protected float shininess = 5.0f;
+	protected float shininess = 1.0f;
 	
 	public Client() {
 		super(objectName, textureName);
@@ -46,17 +46,17 @@ public class Client extends GLModel {
 	protected void initTexture(GL2 gl) {
 		try {
 		        
-			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, mat_ambient_color, 0);
-			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, mat_diffuse, 0);
-			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, mat_specular, 0);
-			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, mat_emission, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, mat_ambient_color, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, mat_diffuse, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, mat_specular, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_EMISSION, mat_emission, 0);
 
-			gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, shininess);
+			gl.glMaterialf(GL.GL_FRONT, GL2.GL_SHININESS, shininess);
 
 			gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
 			gl.glDisable(GL2.GL_TEXTURE_2D);
 
-			gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, 1);
+//			gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, 1);
 
 			gl.glEnable(GL2.GL_LIGHT0);
 			gl.glEnable(GL2.GL_LIGHTING);

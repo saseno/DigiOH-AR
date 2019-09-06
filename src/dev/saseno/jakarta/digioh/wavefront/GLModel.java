@@ -90,6 +90,12 @@ public abstract class GLModel {
 		try {
 			if (texture != null) {
 				
+				//gl.glUseProgram(arg0);
+
+		        gl.glEnable(GL2.GL_TEXTURE_2D);
+		        gl.glDisable(GL2.GL_LIGHT0);
+		        gl.glDisable(GL2.GL_LIGHTING); 
+		        
 				texture.enable(gl);
 				texture.bind(gl);
 				
@@ -100,12 +106,12 @@ public abstract class GLModel {
 		        gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, no_mat, 0);
 		        gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, no_mat, 0);
 		        
-		        gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, no_shininess);
+		        gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 2f);
 
 		        gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
 		        gl.glDisable(GL2.GL_TEXTURE_2D);
 		        
-		        gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, 1);
+//		        gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, 1);
 		        
 		        gl.glEnable(GL2.GL_LIGHT0);
 		        gl.glEnable(GL2.GL_LIGHTING); 

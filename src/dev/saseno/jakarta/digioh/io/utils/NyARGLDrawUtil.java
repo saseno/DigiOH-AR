@@ -177,7 +177,7 @@ public class NyARGLDrawUtil {
 		return;
 	}
 
-	public static void drawBackGround(GL i_gl, INyARRaster i_raster, double i_zoom, boolean mirror, int width, int height) throws NyARRuntimeException {
+	public static void drawBackGround(GL i_gl, INyARRaster i_raster, double i_zoom, boolean mirror, double width, double height) throws NyARRuntimeException {
 		GL2 gl = i_gl.getGL2();
 		
 		IntBuffer texEnvModeSave = IntBuffer.allocate(1);
@@ -305,7 +305,7 @@ public class NyARGLDrawUtil {
 //	}
 
 	private static void arglDispImageStateful(GL i_gl, NyARIntSize i_size, INyARRaster i_raster, double zoom,
-			boolean mirror, int width, int height) throws NyARRuntimeException {
+			boolean mirror, double width, double height) throws NyARRuntimeException {
 
 		Object i_buffer = i_raster.getBuffer();
 		int i_buffer_type = i_raster.getBufferType();
@@ -320,13 +320,13 @@ public class NyARGLDrawUtil {
 		
 		int mirrorZoom = 1;
 		float startX = 0;
-		float startY = height; //i_raster.getHeight();
+		float startY = (float)height; //i_raster.getHeight();
 
 		//System.err.println("--> " + startY);
 		
 		if (mirror) {
 			mirrorZoom = -1;
-			startX = width;
+			startX = (float)width;
 		}
 		
 		gl.glPixelZoom(mirrorZoom * zoomf * ((float) (params.get(2)) / (float) i_size.w),
