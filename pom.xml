@@ -1,0 +1,306 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>dev.saseno.DigiOH</groupId>
+	<artifactId>DigiOH2</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>DigiOH</name>
+	
+	<packaging>jar</packaging>
+		
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+        <mainClass01>mainclass.RunnerClass</mainClass01>
+        <mainClass02>dev.saseno.jakarta.digioh.App</mainClass02>
+        
+        <appName>DigiOH-AR</appName>
+        <appVersion>1.0.0.0</appVersion>
+        
+	</properties>
+	
+	<dependencies>
+	
+		<dependency>
+			<groupId>NyARToolKit</groupId>
+			<artifactId>NyARToolKit</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\NyARToolkit-0.0.1-SNAPSHOT.jar</systemPath>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.jogamp.jogl/jogl-all -->
+		<!-- 
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>jogl-all</artifactId>
+			<version>2.3.2</version>
+		</dependency>		
+		-->
+		 
+		<dependency>
+			<groupId>jogl-all</groupId>
+			<artifactId>jogl-all</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\jogl-all-2.3.2.jar</systemPath>
+			<version>2.3.2</version>
+		</dependency>		
+	
+		<dependency>
+			<groupId>jogl-all-natives-windows-amd64</groupId>
+			<artifactId>jogl-all-natives-windows-amd64</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\jogl-all-natives-windows-amd64-0.0.1-SNAPSHOT.jar</systemPath>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>jogl-all-natives-windows-i586</groupId>
+			<artifactId>jogl-all-natives-windows-i586</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\jogl-all-natives-windows-i586-0.0.1-SNAPSHOT.jar</systemPath>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>gluegen-rt</groupId>
+			<artifactId>gluegen-rt</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\gluegen-rt-2.3.2.jar</systemPath>
+			<version>2.3.2</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>webcam-capture</groupId>
+			<artifactId>webcam-capture</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\webcam-capture-0.3.12.jar</systemPath>
+			<version>0.3.12</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>bridj</groupId>
+			<artifactId>bridj</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\bridj-0.6.2.jar</systemPath>
+			<version>0.6.2</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>slf4j-api</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\slf4j-api-1.7.2.jar</systemPath>
+			<version>1.7.2</version>
+		</dependency>
+		
+	</dependencies>
+	
+	<build>
+	
+		<sourceDirectory>src</sourceDirectory>
+		<resources>
+				
+			<resource>
+				<directory>data</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+			<!-- 		
+			<resource>
+				<directory>lib</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+			-->
+			<resource>
+				<directory>natives</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+			
+		</resources>
+		
+		<plugins>
+			
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+											 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+				
+					<!-- 
+					<includes>
+						<include>**/*</include>
+					</includes>	
+					-->
+									
+					<archive>
+                   		
+						<manifest>
+           					<addClasspath>true</addClasspath>
+							<!-- <classpathPrefix>lib</classpathPrefix>-->
+							<classpathLayoutType>custom</classpathLayoutType>							
+                    		<mainClass>${mainClass01}</mainClass>
+						</manifest>
+											
+						<manifestEntries>
+							<!-- <Class-Path>.</Class-Path> -->
+							<Class-Path>. lib/NyARToolkit-0.0.1-SNAPSHOT.jar lib/jogl-all-2.3.2.jar lib/bridj-0.6.2.jar lib/slf4j-api-1.7.2.jar lib/webcam-capture-0.3.12.jar lib/gluegen-rt-2.3.2.jar lib/jogl-all-natives-windows-i586-0.0.1-SNAPSHOT.jar lib/jogl-all-natives-windows-amd64-0.0.1-SNAPSHOT.jar</Class-Path>
+						</manifestEntries>
+						
+					</archive>	
+					<finalName>${appName}</finalName>
+					
+			        <descriptorRefs>
+			          <descriptorRef>jar-with-dependencies</descriptorRef>
+			        </descriptorRefs>	
+						
+				</configuration>
+			</plugin>
+						
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+													
+					<execution>
+						<id>copy-libraries</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						</configuration>
+					</execution>
+					
+				</executions>
+			</plugin>
+
+			<plugin>
+			
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-data</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						
+						<configuration>
+							<outputDirectory>${basedir}/target/data</outputDirectory>
+							<resources>
+								<resource>
+									<directory>data</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>						
+					</execution>
+					
+					<execution>
+						<id>copy-natives</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						
+						<configuration>
+							<outputDirectory>${basedir}/target/natives</outputDirectory>
+							<resources>
+								<resource>
+									<directory>natives</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>						
+					</execution>
+					
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.akathist.maven.plugins.launch4j</groupId>
+				<artifactId>launch4j-maven-plugin</artifactId>
+				<version>1.5.1</version>
+				<executions>
+				
+					<execution>
+						<id>l4j-gui</id>
+						<phase>package</phase>
+						
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						
+						<configuration>
+						
+							<headerType>console</headerType>
+							<outfile>target/${appName}.exe</outfile>
+							<jar>target/${appName}.jar</jar>
+							<errTitle>Error</errTitle>
+							
+							<!--  <icon>src/main/resources/Security-Camera.ico</icon> -->
+							
+							<classPath>
+								<mainClass>${mainClass01}</mainClass>
+								<preCp>anything</preCp>								
+								<addDependencies>true</addDependencies>
+								<jarLocation>lib</jarLocation>
+							</classPath>
+							
+							<jre>
+								<minVersion>1.7.0</minVersion>
+								<maxVersion>1.8.0</maxVersion>
+							</jre>
+							
+							<!-- 
+							<singleInstance>
+								<mutexName>DigiOH-AR</mutexName>
+								<windowTitle>${project.name}</windowTitle>
+							</singleInstance>
+							-->
+							
+							<versionInfo>
+								<fileVersion>${appVersion}</fileVersion>								
+								<productVersion>${appVersion}</productVersion>
+								<txtFileVersion>v${appVersion}</txtFileVersion>
+								<txtProductVersion>v${appVersion}</txtProductVersion>
+								
+								<fileDescription>${project.name}</fileDescription>
+								<copyright>DigiOH - 2019</copyright>
+								
+								<productName>${appName}</productName>
+								<internalName>${appName}</internalName>
+								<originalFilename>${appName}.exe</originalFilename>
+								
+							</versionInfo>
+							
+						</configuration>
+						
+					</execution>					
+				</executions>
+				
+			</plugin>
+			
+		</plugins>
+		
+	</build>
+</project>
