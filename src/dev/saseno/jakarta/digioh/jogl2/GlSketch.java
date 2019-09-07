@@ -19,26 +19,24 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 
 import dev.saseno.jakarta.digioh.io.utils.ScreenResSelector;
-import jp.nyatla.nyartoolkit.core.types.NyARIntSize;
 
 public abstract class GlSketch implements GLEventListener, KeyListener, MouseListener {
 
 	private Frame frame;
 	protected GLCanvas canvas;
-	protected Dimension cameraDimension = new Dimension();
+	protected Dimension cameraDimension = new Dimension(320, 240);
 
 	private boolean _is_setup_done = false;
 	private GraphicsDevice dev;
-
-//	protected int i_width = 320;
-//	protected int i_height = 240;
 	
 	private static final String TITLE = "DigiOH - Augmented Reality";
+	private WindowAdapter exitWindowAdapter = new WindowAdapter() {
+		public void windowClosing(WindowEvent e) {
+			System.exit(0);
+		}
+	};
 
-	public GlSketch(int i_width, int i_height) {
-//		this.i_width = i_width;		
-//		this.i_height = i_height;
-		
+	public GlSketch(int i_width, int i_height) {		
 		cameraDimension.setSize(i_width, i_height);
 	}
 
@@ -57,10 +55,7 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 
 				newMode = ScreenResSelector.showSelectionDialog();
 				if (newMode != null) {
-					
-					//i_width = newMode.getWidth();
-					//i_height = newMode.getHeight();
-					
+										
 					cameraDimension.setSize(newMode.getWidth(), newMode.getHeight());
 				}
 			}
@@ -69,29 +64,26 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 		}
 
 		frame = new Frame(TITLE);
-		if (newMode != null) {
-			frame.setUndecorated(true);
-		}
+		frame.setUndecorated(newMode != null);
+		frame.addWindowListener(exitWindowAdapter);
+		frame.setSize(cameraDimension.width, cameraDimension.height);
 		
 		canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(this);
-		canvas.addMouseListener(this);
-		
-		frame.setSize(cameraDimension.width, cameraDimension.height);
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
+		canvas.addMouseListener(this);		
+		canvas.setBounds(0, 0, cameraDimension.width, cameraDimension.height);
 
 		frame.add(canvas);
-		frame.setVisible(true);
+		
+		frame.setVisible(true);		
+		frame.setResizable(false);
 		
 		if (dev.isFullScreenSupported() && (newMode != null)) {
 			dev.setFullScreenWindow(frame);
 			if (dev.isDisplayChangeSupported()) {
 				dev.setDisplayMode(newMode);
+				
 			} else {
 				// Not much point in having a full-screen window in this case
 				dev.setFullScreenWindow(null);
@@ -112,16 +104,13 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 				System.err.println("NOTE: was not able to change display mode; full-screen disabled");
 			}
 		}
+		
 	}
 
 	public void run() {
 
 		frame = new Frame(TITLE);
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
+		frame.addWindowListener(exitWindowAdapter);
 
 		canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
@@ -135,24 +124,30 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 		frame.setVisible(true);
 	}
 
-	public void title(String i_title) {
-		frame.setTitle(i_title);
-	}
+	public void size(int width, int height) {
+		
+		cameraDimension.setSize(width, height);
+		
+		if (frame.isUndecorated()) {
 
-	public void size(int i_w, int i_h) {
-		
-		cameraDimension.setSize(i_w, i_h);
-		
-		Insets ins = frame.getInsets();
-		frame.setSize(i_w + ins.left + ins.right, i_h + ins.top + ins.bottom);
-		canvas.setBounds(ins.left, ins.top, i_w, i_h);
+			frame.setSize(cameraDimension.width, cameraDimension.height);
+			canvas.setBounds(0, 0, cameraDimension.width, cameraDimension.height);
+			
+		} else {
+
+			 Insets ins = frame.getInsets();
+			 frame.setSize(width + ins.left + ins.right, height + ins.top + ins.bottom);
+			 canvas.setBounds(ins.left, ins.top, width, height);
+		}
 	}
 
 	@Override
 	public final void init(GLAutoDrawable drawable) {
 		try {
 
+			System.err.println("------------------");
 			System.err.println("init...");
+			System.err.println("------------------");
 
 			GL gl = drawable.getGL();
 			setup(gl);
@@ -172,10 +167,7 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 		GL gl = drawable.getGL();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		gl.glViewport(0, 0, width, height);
-		
-		//i_width = width;
-		//i_height = height;
-		
+				
 		cameraDimension.setSize(width, height);
 
 		return;

@@ -2,6 +2,7 @@ package dev.saseno.jakarta.digioh;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -22,6 +23,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
+import com.jogamp.opengl.util.awt.TextRenderer;
 
 import dev.saseno.jakarta.digioh.io.utils.NyARGlMarkerSystem;
 import dev.saseno.jakarta.digioh.io.utils.NyARGlRender;
@@ -36,7 +38,6 @@ import jp.nyatla.nyartoolkit.j2se.NyARBufferedImageRaster;
 import jp.nyatla.nyartoolkit.markersystem.NyARMarkerSystemConfig;
 import jp.nyatla.nyartoolkit.markersystem.NyARSensor;
 
-@SuppressWarnings("unused")
 public class App extends GlSketch {
 
 	protected boolean useCamera = false;
@@ -76,19 +77,35 @@ public class App extends GlSketch {
 	private double rquad = 0.0;
 	
 	private String tempTestImg = "/320x240ABGR.png";	
-	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
 	
-	private GL currentGL = null;
-	private AWTGLReadBufferUtil util = new AWTGLReadBufferUtil(GLProfile.getGL2ES2(), true);
+	private TextRenderer textRenderer = null;
+	private TextRenderer waterMarkTextRenderer = null;
 	
 	private int startCaptureScreen = 0;
 	private long startCaptureScreenTime = 0;
 	
+	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+	
 	public App(int i_width, int i_height, boolean useCamera) {
 		super(i_width, i_height);
 		this.useCamera = useCamera;
-		
-		initCamera();
+
+		try {
+			if (this.useCamera) {
+				initCameraDimension();
+				
+			} else {
+
+				img = ImageIO.read(getClass().getResourceAsStream(tempTestImg));
+				testImg = new NyARBufferedImageRaster(img);
+				
+				cameraDimension.setSize(testImg.getWidth(), testImg.getHeight());
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) {
@@ -96,7 +113,7 @@ public class App extends GlSketch {
 		int w0 = 320; //640;
 		int h0 = 240; //480;
 		
-		boolean userInputCamera = false;
+		boolean userInputCamera = true;
 		
 		for (String arg : args) {
 			if ("camera".equals(arg.trim())) {
@@ -104,11 +121,12 @@ public class App extends GlSketch {
 			}
 		}
 			
-		System.out.println("------------------");
-		System.out.println("START APP");
-		System.out.println("------------------");
+		System.err.println("------------------");
+		System.err.println("START APP");
+		System.err.println("------------------");
 		
-		App digiOhApp = new App(w0, h0, userInputCamera);		
+		App digiOhApp = new App(w0, h0, userInputCamera);
+		
 		if (userInputCamera) {
 			digiOhApp.run2();
 		} else {
@@ -128,53 +146,41 @@ public class App extends GlSketch {
 		modelClient = new Client();
 	}
 	
-	private void initCamera() {
+	private void initCameraDimension() {
 		try {
-
+			
+			System.err.println("------------------");
+			System.err.println("Use camera");
+			System.err.println("------------------");
+			
 			for (Webcam webCam : Webcam.getWebcams()) {
 				System.err.println("--> webCam: " + webCam);
 			}
-			
+
 			camera = Webcam.getDefault();
 			cameraDimension = camera.getViewSize();
 
 			for (Dimension dim : camera.getViewSizes()) {
-				System.err.println("--> dim: " + dim);
+				System.err.println("--> cameraDimension: " + dim);
 				if (cameraDimension.height < dim.height && cameraDimension.width < dim.width) {
 					cameraDimension = dim;
 				}
 			}
-
+			
+			System.err.println("------------------");
 			camera.setViewSize(cameraDimension);
-			//size(cameraDimension.width, cameraDimension.height);	
-			
-			//config = new NyARMarkerSystemConfig(cameraDimension.width, cameraDimension.height);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 	
 	public void setup(GL gl) throws Exception {
-				
-		try {
-						
-			img = ImageIO.read(getClass().getResourceAsStream(tempTestImg));
-			testImg = new NyARBufferedImageRaster(img);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
 
 		NyARMarkerSystemConfig config = new NyARMarkerSystemConfig(cameraDimension.width, cameraDimension.height);
-		
-		if (useCamera) {
-			//initCamera(config);
+		size(cameraDimension.width, cameraDimension.height);
 			
-		} else {
-			size(cameraDimension.width, cameraDimension.height);	
-		}		
-		
 		nyar 	= new NyARGlMarkerSystem(config);
 		render 	= new NyARGlRender(nyar);
 		sensor 	= new NyARSensor(config.getScreenSize());
@@ -186,17 +192,16 @@ public class App extends GlSketch {
 		id_insta 	= nyar.addARMarker(getClass().getResourceAsStream(patt_insta), 16, 25, 80);
 		id_twitter 	= nyar.addARMarker(getClass().getResourceAsStream(patt_twitter), 16, 25, 80);		
 		
-		//textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 25));
+		textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, cameraDimension.height));
+		waterMarkTextRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);
-
 		initModel();
 		
 		if (useCamera) {
 			camera.open();
 		}
 		
-		currentGL = gl;
 	}
 	
 	private void updateRotation() {
@@ -282,16 +287,31 @@ public class App extends GlSketch {
 			Thread.sleep(1);
 			
 			
-			if ((startCaptureScreen >= 0) && (startCaptureScreenTime + 1000000 >= System.currentTimeMillis() - startCaptureScreenTime)) {
+			if ((startCaptureScreen >= 0)) {
 				
 				if (startCaptureScreen == 0) {
 					System.err.println("--> captured...");
-				} else {
-					System.err.println("--> countDown: " + startCaptureScreen);
-				}
+					startCaptureScreen = -1;
 
-				startCaptureScreen--;
-				startCaptureScreenTime = System.currentTimeMillis();
+					waterMarkTextRenderer.beginRendering(cameraDimension.width, cameraDimension.height);
+					waterMarkTextRenderer.draw("datetime: " + dateFormat.format(new Date()), 0, 0);
+					waterMarkTextRenderer.endRendering();
+					
+					saveScreenShot(gl);
+					
+				} else {
+				
+					textRenderer.beginRendering(cameraDimension.width, cameraDimension.height);
+					//textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);
+					textRenderer.draw("" + startCaptureScreen, (cameraDimension.width/10) * 3, (cameraDimension.height/7) * 1);
+					textRenderer.endRendering();
+					
+				}
+				
+				if ((System.currentTimeMillis() - startCaptureScreenTime >= 1200)) {
+					startCaptureScreen--;
+					startCaptureScreenTime = System.currentTimeMillis();
+				}
 			}
 
 		} catch (Exception e) {
@@ -299,72 +319,36 @@ public class App extends GlSketch {
 		}	
 		//}
 	}
-	
-	protected void saveImage() {
+
+	private void saveScreenShot(GL gl) {
 
 		try {
-						
-			Path location = Paths.get(App.class.getProtectionDomain().getCodeSource().getLocation()
-				    .toURI());
-
-			//File outputfile = new File(location + "/" + "DigiOH_photo-" + dateFormat.format(new Date()) + ".png");
-			//System.err.println("--> savedImageTo: " + outputfile.getAbsolutePath());
-			//System.err.println("--> savedImageTo: " + outputfile.exists());
-			
-			BufferedImage currImage = util.readPixelsToBufferedImage(currentGL, false);
-			System.err.println("--> currImage: " + currImage);
-			
-			BufferedImage screenshot = new BufferedImage(cameraDimension.width, cameraDimension.height,
-					BufferedImage.TYPE_INT_RGB);
-			
-			File outputfile2 = new File("d:/DigiOH_photo-" + dateFormat.format(new Date()) + ".png");
-			ImageIO.write(currImage, "png", outputfile2);
-			
-//			BufferedImage tScreenshot = Screenshot.readToBufferedImage(0,0, i_width, i_height, false);
-//			File tScreenCaptureImageFile = new File(tFileName);
-//			ImageIO.write(tScreenshot, "png", tScreenCaptureImageFile);			
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		try {
-			BufferedImage screenshot = new BufferedImage(cameraDimension.width, cameraDimension.height,
-					BufferedImage.TYPE_INT_RGB);
+			BufferedImage screenshot = new BufferedImage(cameraDimension.width, cameraDimension.height, BufferedImage.TYPE_INT_RGB);
 			Graphics graphics = screenshot.getGraphics();
 
 			ByteBuffer buffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
-			// be sure you are reading from the right fbo (here is supposed to be the
-			// default one)
-			// bind the right buffer to read from
-			currentGL.getGL2().glReadBuffer(GL2.GL_BACK);
-			
-			// if the width is not multiple of 4, set unpackPixel = 1
-			currentGL.getGL2().glReadPixels(0, 0, cameraDimension.width, cameraDimension.height, GL2.GL_RGBA,
-					GL2.GL_UNSIGNED_BYTE, buffer);
+			gl.getGL2().glReadBuffer(GL2.GL_BACK);
+			gl.getGL2().glReadPixels(0, 0, cameraDimension.width, cameraDimension.height, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, buffer);
 
 			for (int h = 0; h < cameraDimension.height; h++) {
 				for (int w = 0; w < cameraDimension.width; w++) {
-					// The color are the three consecutive bytes, it's like referencing
-					// to the next consecutive array elements, so we got red, green, blue..
-					// red, green, blue, and so on..+ ", "
 					graphics.setColor(new Color((buffer.get() & 0xff), (buffer.get() & 0xff), (buffer.get() & 0xff)));
 					buffer.get(); // consume alpha
-					graphics.drawRect(w, cameraDimension.height - h, 1, 1); // height - h is for flipping the image
+					graphics.drawRect(w, cameraDimension.height - h, 1, 1);
 				}
 			}
 			// This is one util of mine, it make sure you clean the direct buffer
 			//BufferUtils.destroyDirectBuffer(buffer);
 
-			File outputfile = new File("D:\\Downloads\\texture" + dateFormat.format(new Date()) + ".png");
+			File outputfile = new File("D:/test_" + dateFormat.format(new Date()) + ".png");
 			ImageIO.write(screenshot, "png", outputfile);
+			
 		} catch (Exception ex) {
 		}
 	}
-
+	
 	@Override
 	public void keyTyped(java.awt.event.KeyEvent e) {
-		// TODO Auto-generated method stub		
 	}
 
 	@Override
@@ -382,7 +366,6 @@ public class App extends GlSketch {
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			System.err.println("--> double clicked");
-			//saveImage();
 			
 			startCaptureScreen = 5;
 			startCaptureScreenTime = System.currentTimeMillis();
