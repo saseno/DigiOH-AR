@@ -84,6 +84,10 @@ public class App extends GlSketch {
 	private int startCaptureScreen = 0;
 	private long startCaptureScreenTime = 0;
 	
+	private ByteBuffer snapShotBuffer = null;
+	private BufferedImage screenshot = null;
+	private Graphics graphics = null;
+	
 	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 	
 	public App(int i_width, int i_height, boolean useCamera) {
@@ -197,6 +201,10 @@ public class App extends GlSketch {
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		initModel();
+
+		snapShotBuffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
+		screenshot = new BufferedImage(cameraDimension.width, cameraDimension.height, BufferedImage.TYPE_INT_RGB);
+		graphics = screenshot.getGraphics();
 		
 		if (useCamera) {
 			camera.open();
@@ -323,24 +331,25 @@ public class App extends GlSketch {
 	private void saveScreenShot(GL gl) {
 
 		try {
-			BufferedImage screenshot = new BufferedImage(cameraDimension.width, cameraDimension.height, BufferedImage.TYPE_INT_RGB);
-			Graphics graphics = screenshot.getGraphics();
+			//BufferedImage screenshot = new BufferedImage(cameraDimension.width, cameraDimension.height, BufferedImage.TYPE_INT_RGB);
+			//Graphics graphics = screenshot.getGraphics();
 
-			ByteBuffer buffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
+			snapShotBuffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
 			gl.getGL2().glReadBuffer(GL2.GL_BACK);
-			gl.getGL2().glReadPixels(0, 0, cameraDimension.width, cameraDimension.height, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, buffer);
+			gl.getGL2().glReadPixels(0, 0, cameraDimension.width, cameraDimension.height, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, snapShotBuffer);
 
 			for (int h = 0; h < cameraDimension.height; h++) {
 				for (int w = 0; w < cameraDimension.width; w++) {
-					graphics.setColor(new Color((buffer.get() & 0xff), (buffer.get() & 0xff), (buffer.get() & 0xff)));
-					buffer.get(); // consume alpha
+					graphics.setColor(new Color((snapShotBuffer.get() & 0xff), (snapShotBuffer.get() & 0xff), (snapShotBuffer.get() & 0xff)));
+					snapShotBuffer.get(); // consume alpha
 					graphics.drawRect(w, cameraDimension.height - h, 1, 1);
 				}
 			}
 			// This is one util of mine, it make sure you clean the direct buffer
 			//BufferUtils.destroyDirectBuffer(buffer);
+			snapShotBuffer.clear();
 
-			File outputfile = new File("D:/test_" + dateFormat.format(new Date()) + ".png");
+			File outputfile = new File("photo_" + dateFormat.format(new Date()) + ".png");
 			ImageIO.write(screenshot, "png", outputfile);
 			
 		} catch (Exception ex) {
