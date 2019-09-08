@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -215,7 +216,6 @@ public class App extends GlSketch {
 		if (useCamera) {
 			camera.open();
 		}
-
 	}
 
 	private void updateRotation() {
@@ -251,8 +251,8 @@ public class App extends GlSketch {
 
 			render.drawBackground(gl, sensor.getSourceImage(), isMirrored(), cameraDimension.getWidth(),
 					cameraDimension.getHeight());
-			render.loadARProjectionMatrix(gl, isMirrored());
-
+			
+			render.loadARProjectionMatrix(gl, isMirrored());			
 			nyar.update(sensor);
 
 			if (nyar.isExist(id)) {
@@ -268,38 +268,32 @@ public class App extends GlSketch {
 
 			if (nyar.isExist(id_cloud)) {
 				nyar.loadTransformMatrix(gl, id_cloud);
-				render.renderModel(gl, 0, 0, 0, rquad, modelMars);
+				render.renderModel(gl, 0, 0, 0, rquad, modelEarth);
 			}
 
 			if (nyar.isExist(id_digiOH)) {
-
 				nyar.loadTransformMatrix(gl, id_digiOH);
 				render.renderModel(gl, 60, 0, 0, rquad, modelLove);
 			}
 
 			if (nyar.isExist(id_insta)) {
 				nyar.loadTransformMatrix(gl, id_insta);
-				render.renderModel(gl, 0, 0, 0, rquad, modelEarth);
-
+				render.renderModel(gl, 0, 0, 0, rquad, modelMars);
 			}
 
 			if (nyar.isExist(id_twitter)) {
 				nyar.loadTransformMatrix(gl, id_twitter);
 				render.renderModel(gl, 0, -80, 0, rquad, modelPatung);
-
-//				textRenderer.beginRendering(i_width, i_height);
-//				textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);
-//				textRenderer.draw("Twitter", 3, 3);
-//				textRenderer.endRendering();
 			}
 
 			if (nyar.isExist(id_samsung)) {
 				nyar.loadTransformMatrix(gl, id_samsung);
-				render.renderModel(gl, 0, 0, 0, rquad, modelClient);
+		        render.renderModel(gl, 0, 0, 0, rquad, modelClient);
 			}
 
 			Thread.sleep(1);
-
+			
+			
 			if ((startCaptureScreen >= 0)) {
 
 				if (startCaptureScreen == 0) {
@@ -315,12 +309,26 @@ public class App extends GlSketch {
 					saveScreenShot(gl);
 
 				} else {
-
+					
+					//gl.getGL2().glPushMatrix();
 					textRenderer.beginRendering(cameraDimension.width, cameraDimension.height);
-					// textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);
+					//textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);
+					
 					textRenderer.draw("" + startCaptureScreen, (cameraDimension.width / 10) * 3,
 							(cameraDimension.height / 7) * 1);
 					textRenderer.endRendering();
+					textRenderer.flush();
+					//gl.getGL2().glPopMatrix();
+					
+			        gl.glEnable(GL2.GL_TEXTURE_2D);
+			        gl.glDisable(GL2.GL_LIGHT0);
+			        gl.glDisable(GL2.GL_LIGHTING); 
+					
+//					textRenderer.begin3DRendering();
+//			        String s = "" + startCaptureScreen; 
+//			        final float scale = 50f;
+//			        textRenderer.draw3D("" + startCaptureScreen, (float) (cameraDimension.width / 10) * 3, (float) (cameraDimension.height / 7) * 1, 0, scale);
+//			        textRenderer.end3DRendering();
 
 				}
 
@@ -335,7 +343,7 @@ public class App extends GlSketch {
 		}
 		// }
 	}
-
+	
 	private void saveScreenShot(GL gl) {
 
 		try {
@@ -345,7 +353,7 @@ public class App extends GlSketch {
 
 			graphics = screenshot.getGraphics();
 			snapShotBuffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
-			gl.getGL2().glReadBuffer(GL2.GL_BACK);
+			gl.getGL2().glReadBuffer(GL2.GL_FRONT_AND_BACK);
 			gl.getGL2().glReadPixels(0, 0, cameraDimension.width, cameraDimension.height, GL2.GL_RGBA,
 					GL2.GL_UNSIGNED_BYTE, snapShotBuffer);
 

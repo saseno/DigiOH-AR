@@ -10,7 +10,7 @@ public class Patung extends GLModel {
 	private static final String objectName = "/obj/patung/Thai_Female_Sandstone_V2.2.obj";
 	private static final String textureName = "/obj/patung/T_BaseColor_2K_Thai_Female_Sandstone.jpg";
 	
-	private float fSize = 400f;
+	private float fSize = 1200f;
 	
 	public Patung() {
 		super(objectName, textureName);

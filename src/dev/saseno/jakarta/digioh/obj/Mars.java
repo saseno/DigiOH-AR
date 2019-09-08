@@ -10,7 +10,7 @@ public class Mars extends GLModel {
 	private static final String objectName = "/obj/mars/Mars_2K.obj";
 	private static final String textureName = "/obj/mars/Diffuse_2K.png";
 	
-	private float fSize = 10f;
+	private float fSize = 50f;
 	
 	public Mars() {
 		super(objectName, textureName);
