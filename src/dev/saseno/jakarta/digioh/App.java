@@ -380,18 +380,19 @@ public class App extends GlSketch {
 	private void initInstagram() {
 		try {
 
-			String fileName = null;
-			byte[] data = null;
-
-			FacebookClient facebookClient = new DefaultFacebookClient("", Version.LATEST);
-			User user = facebookClient.fetchObject("me", User.class);
-			System.out.println("User name: " + user.getName());
-
-			URL url = new URL("img_url");
-			InputStream stream = new BufferedInputStream(url.openConnection().getInputStream());
-
-			FacebookType photo = facebookClient.publish("facebook_page_id/photos", FacebookType.class,
-					BinaryAttachment.with(fileName, data));
+//			String fileName = null;
+//			byte[] data = null;
+//			String accessToken = "";
+//						
+//			FacebookClient facebookClient = new DefaultFacebookClient(accessToken, Version.LATEST);
+//			User user = facebookClient.fetchObject("me", User.class);
+//			System.out.println("User name: " + user.getName());
+//
+//			URL url = new URL("img_url");
+//			InputStream stream = new BufferedInputStream(url.openConnection().getInputStream());
+//
+//			FacebookType photo = facebookClient.publish("facebook_page_id/photos", FacebookType.class,
+//					BinaryAttachment.with(fileName, data));
 
 		} catch (Exception e) {
 			e.printStackTrace();
