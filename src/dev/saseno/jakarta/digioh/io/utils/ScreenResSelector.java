@@ -13,13 +13,14 @@ public class ScreenResSelector {
 	public static java.util.List getAvailableDisplayModes() {
 		java.util.List modes = getDisplayModes();
 		final DisplayMode curMode = getCurrentDisplayMode();
-		// Filter everything which is higher frequency than the current
-		// display mode
+		
+		// Filter everything which is higher frequency than the current display mode
 		modes = filterDisplayModes(modes, new DisplayModeFilter() {
 			public boolean filter(DisplayMode mode) {
 				return (mode.getRefreshRate() <= curMode.getRefreshRate());
 			}
 		});
+		
 		// Filter everything that is not at least 24-bit
 		modes = filterDisplayModes(modes, new DisplayModeFilter() {
 			public boolean filter(DisplayMode mode) {
@@ -27,15 +28,18 @@ public class ScreenResSelector {
 				return (mode.getBitDepth() < 0 || mode.getBitDepth() >= 24);
 			}
 		});
+		
 		// Filter everything less than 640x480
 		modes = filterDisplayModes(modes, new DisplayModeFilter() {
 			public boolean filter(DisplayMode mode) {
 				return (mode.getWidth() >= 640 && mode.getHeight() >= 480);
 			}
 		});
+		
 		if (modes.size() == 0) {
 			throw new RuntimeException("Couldn't find any valid display modes");
 		}
+		
 		return modes;
 	}
 
@@ -48,6 +52,15 @@ public class ScreenResSelector {
 		dialog.setVisible(true);
 		dialog.waitFor();
 		return dialog.selected();
+	}
+	
+	public static DisplayMode getHighestMode() {
+		SelectionDialog dialog = new SelectionDialog();
+		
+		//dialog.setVisible(true);
+		//dialog.waitFor();
+		
+		return dialog.getHighestMode();
 	}
 
 	public static void main(String[] args) {
@@ -201,6 +214,11 @@ public class ScreenResSelector {
 			} else {
 				return (DisplayMode) modes.get(selectedIndex);
 			}
+		}
+
+		public DisplayMode getHighestMode() {
+			return (DisplayMode) modes.get(modes.size() - 1);
+			
 		}
 	}
 

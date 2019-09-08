@@ -48,14 +48,21 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 			try {
 				java.util.List modes = ScreenResSelector.getAvailableDisplayModes();
 				newMode = (DisplayMode) modes.get(modes.size() - 1);
+				
 				cameraDimension.setSize(newMode.getWidth(), newMode.getHeight());
+				
+				//newMode = ScreenResSelector.getHighestMode();
+//				newMode = ScreenResSelector.showSelectionDialog();
+//				
+//				if (newMode != null) {										
+//					cameraDimension.setSize(newMode.getWidth(), newMode.getHeight());
+//				}
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 
 				newMode = ScreenResSelector.showSelectionDialog();
-				if (newMode != null) {
-										
+				if (newMode != null) {										
 					cameraDimension.setSize(newMode.getWidth(), newMode.getHeight());
 				}
 			}
@@ -75,8 +82,6 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 		canvas.setBounds(0, 0, cameraDimension.width, cameraDimension.height);
 
 		frame.add(canvas);
-		
-		frame.setVisible(true);		
 		frame.setResizable(false);
 		
 		if (dev.isFullScreenSupported() && (newMode != null)) {
@@ -105,6 +110,8 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 			}
 		}
 		
+		frame.setVisible(true);		
+		frame.toFront();
 	}
 
 	public void run() {

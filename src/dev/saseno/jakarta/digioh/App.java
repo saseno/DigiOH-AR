@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -23,6 +24,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
+import com.jogamp.opengl.util.awt.ImageUtil;
 import com.jogamp.opengl.util.awt.TextRenderer;
 
 import dev.saseno.jakarta.digioh.io.utils.NyARGlMarkerSystem;
@@ -204,7 +206,6 @@ public class App extends GlSketch {
 
 		snapShotBuffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
 		screenshot = new BufferedImage(cameraDimension.width, cameraDimension.height, BufferedImage.TYPE_INT_RGB);
-		graphics = screenshot.getGraphics();
 		
 		if (useCamera) {
 			camera.open();
@@ -301,9 +302,9 @@ public class App extends GlSketch {
 					System.err.println("--> captured...");
 					startCaptureScreen = -1;
 
-					waterMarkTextRenderer.beginRendering(cameraDimension.width, cameraDimension.height);
-					waterMarkTextRenderer.draw("datetime: " + dateFormat.format(new Date()), 0, 0);
-					waterMarkTextRenderer.endRendering();
+					//waterMarkTextRenderer.beginRendering(cameraDimension.width, cameraDimension.height);
+					//waterMarkTextRenderer.draw("datetime: " + dateFormat.format(new Date()), 0, 0);
+					//waterMarkTextRenderer.endRendering();
 					
 					saveScreenShot(gl);
 					
@@ -334,22 +335,31 @@ public class App extends GlSketch {
 			//BufferedImage screenshot = new BufferedImage(cameraDimension.width, cameraDimension.height, BufferedImage.TYPE_INT_RGB);
 			//Graphics graphics = screenshot.getGraphics();
 
+			graphics = screenshot.getGraphics();
 			snapShotBuffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
 			gl.getGL2().glReadBuffer(GL2.GL_BACK);
 			gl.getGL2().glReadPixels(0, 0, cameraDimension.width, cameraDimension.height, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, snapShotBuffer);
 
+			//snapShotBuffer = (ByteBuffer) snapShotBuffer.flip();
+			
 			for (int h = 0; h < cameraDimension.height; h++) {
 				for (int w = 0; w < cameraDimension.width; w++) {
 					graphics.setColor(new Color((snapShotBuffer.get() & 0xff), (snapShotBuffer.get() & 0xff), (snapShotBuffer.get() & 0xff)));
 					snapShotBuffer.get(); // consume alpha
-					graphics.drawRect(w, cameraDimension.height - h, 1, 1);
+
+					//graphics.translate(w >> 1, h >> 1);
+					graphics.drawRect(w, h, 1, 1);
+					//graphics.drawRect(w, cameraDimension.height - h, 1, 1);
 				}
 			}
 			// This is one util of mine, it make sure you clean the direct buffer
 			//BufferUtils.destroyDirectBuffer(buffer);
 			snapShotBuffer.clear();
-
-			File outputfile = new File("photo_" + dateFormat.format(new Date()) + ".png");
+						
+			//ImageUtil.flipImageVertically(screenshot);
+			File outputfile = new File("photos/DigiOH-AR_" + dateFormat.format(new Date()) + ".png");
+			outputfile.mkdirs();
+						
 			ImageIO.write(screenshot, "png", outputfile);
 			
 		} catch (Exception ex) {
