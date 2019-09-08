@@ -24,6 +24,40 @@
 	
 	<dependencies>
 	
+<!-- 
+<dependency>
+  <groupId>org.brunocvcunha.instagram4j</groupId>
+  <artifactId>instagram4j</artifactId>
+  <version>1.12</version>
+</dependency>
+	-->
+	
+		<!-- 
+		<dependency>
+			<groupId>httpclient</groupId>
+			<artifactId>httpclient</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\httpclient-4.5.9.jar</systemPath>
+			<version>4.5.9</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>instagram4j</groupId>
+			<artifactId>instagram4j</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\instagram4j-1.12.jar</systemPath>
+			<version>1.12</version>
+		</dependency>
+		-->
+		
+		<dependency>
+			<groupId>restfb</groupId>
+			<artifactId>restfb</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\restfb-2.24.1.jar</systemPath>
+			<version>2.24.1</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>NyARToolKit</groupId>
 			<artifactId>NyARToolKit</artifactId>

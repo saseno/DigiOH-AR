@@ -18,6 +18,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/jogl-all-natives-windows-i586-0.0.1-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/NyARToolKit-0.0.1-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/webcam-capture-0.3.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/restfb-2.24.1.jar"/>
 	<classpathentry kind="src" output="target/classes" path="src">
 		<attributes>
 			<attribute name="optional" value="true"/>
