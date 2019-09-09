@@ -13,9 +13,9 @@ public class Love extends GLModel {
 	
 	private float fSize = 4f;
 	
-	protected float[] mat_ambient 		= { 0.9f, 0.2f, 0.2f, 1.0f };
+	protected float[] mat_ambient 		= { 0.5f, 0.2f, 0.2f, 1.0f };
 	protected float[] mat_ambient_color = { 0.3f, 0.0f, 0.0f, 1.0f };
-	protected float[] mat_diffuse 		= { 0.9f, 0.2f, 0.2f, 1.0f };
+	protected float[] mat_diffuse 		= { 0.5f, 0.2f, 0.2f, 1.0f };
 	protected float[] mat_specular 		= { 0.1f, 0.1f, 0.1f, 1.0f };
 
 	protected float shininess = 2.0f;

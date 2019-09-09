@@ -269,13 +269,14 @@ public class App extends GlSketch {
 					saveScreenShot(gl);
 					
 				} else {
-					
+
+			        gl.getGL2().glDisable(GL2.GL_TEXTURE_2D);
 					textRenderer.beginRendering(cameraDimension.width, cameraDimension.height);
-					//textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);					
+					textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);					
 					textRenderer.draw("" + startCaptureScreen, (cameraDimension.width / 10) * 3,
 							(cameraDimension.height / 7) * 1);
 					textRenderer.endRendering();
-					textRenderer.flush();					
+					//textRenderer.flush();					
 
 				}
 

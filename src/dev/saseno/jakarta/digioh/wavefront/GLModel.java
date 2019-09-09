@@ -98,6 +98,21 @@ public abstract class GLModel {
 		        
 				texture.enable(gl);
 				texture.bind(gl);
+
+				
+				gl.glEnable(GL2.GL_TEXTURE_2D);
+				gl.glEnable(GL2.GL_LIGHT0);
+				gl.glEnable(GL2.GL_LIGHTING);
+				
+				gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, mat_ambient, 0);
+				gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, mat_ambient_color, 0);
+				gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, mat_diffuse, 0);
+				gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, mat_specular, 0);
+
+				gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 0.5f);
+
+				gl.glEnable(GL2.GL_LIGHT0);
+				gl.glEnable(GL2.GL_LIGHTING);
 				
 			} else {
 		        
