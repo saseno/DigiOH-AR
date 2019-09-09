@@ -270,7 +270,6 @@ public class App extends GlSketch {
 					// waterMarkTextRenderer.endRendering();
 
 					saveScreenShot(gl);
-					//captureDialog.showWindow();
 					
 				} else {
 					
@@ -307,8 +306,6 @@ public class App extends GlSketch {
 			gl.getGL2().glReadPixels(0, 0, cameraDimension.width, cameraDimension.height, GL2.GL_RGBA,
 					GL2.GL_UNSIGNED_BYTE, snapShotBuffer);
 
-			// snapShotBuffer = (ByteBuffer) snapShotBuffer.flip();
-
 			for (int h = 0; h < cameraDimension.height; h++) {
 				for (int w = 0; w < cameraDimension.width; w++) {
 
@@ -317,22 +314,19 @@ public class App extends GlSketch {
 							(snapShotBuffer.get() & 0xff),
 							(snapShotBuffer.get() & 0xff)));
 					
-					snapShotBuffer.get(); // consume alpha
-					
+					snapShotBuffer.get(); // consume alpha					
 					graphics.drawRect(w, h, 1, 1);
-					// graphics.drawRect(w, cameraDimension.height - h, 1, 1);
 				}
 			}
-			// This is one util of mine, it make sure you clean the direct buffer
-			// BufferUtils.destroyDirectBuffer(buffer);
+
 			snapShotBuffer.clear();
 
-			// ImageUtil.flipImageVertically(screenshot);
-			File outputfile = new File("photos/DigiOH-AR_" + dateFormat.format(new Date()) + ".png");
+			String fileLocation = "photos/DigiOH-AR_" + dateFormat.format(new Date()) + ".png";
+			File outputfile = new File(fileLocation);
 			outputfile.mkdirs();
 
 			ImageIO.write(screenshot, "png", outputfile);
-			uploadPhoto(outputfile);
+			uploadPhoto(fileLocation);			
 
 		} catch (Exception ex) {
 		}
@@ -360,9 +354,10 @@ public class App extends GlSketch {
 		}
 	}
 
-	private void uploadPhoto(File photoFile) {
+	private void uploadPhoto(String fileLocation) {
 		try {
-
+			captureDialog.sendEmail(fileLocation);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -388,7 +383,7 @@ public class App extends GlSketch {
 		if (e.getClickCount() == 2) {
 			//prevent double click if one already running
 			if (startCaptureScreen == -1) {
-				startCaptureScreen = 5;
+				startCaptureScreen = 1; //5;
 				startCaptureScreenTime = System.currentTimeMillis();
 			}
 		}
