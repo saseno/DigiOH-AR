@@ -22,7 +22,7 @@ import dev.saseno.jakarta.digioh.io.utils.ScreenResSelector;
 
 public abstract class GlSketch implements GLEventListener, KeyListener, MouseListener {
 
-	private Frame frame;
+	protected Frame frame;
 	protected GLCanvas canvas;
 	protected Dimension cameraDimension = new Dimension(320, 240);
 
@@ -70,6 +70,7 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 				
 				if (newMode == null) {
 					newMode = ScreenResSelector.showSelectionDialog();
+					//newMode = (DisplayMode) modes.get(modes.size() - 1);
 				}
 				
 				//newMode = (DisplayMode) modes.get(modes.size() - 1);				

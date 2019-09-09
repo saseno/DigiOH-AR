@@ -2,6 +2,7 @@ package dev.saseno.jakarta.digioh.email;
 
 import java.awt.Button;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -11,14 +12,10 @@ import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
-import javax.swing.SwingUtilities;
-
-public class CaptureDialog extends WindowAdapter implements ActionListener {
-	
-	private Frame frame;	
+@SuppressWarnings("serial")
+public class CaptureDialog extends Dialog implements ActionListener {
+		
 	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	
 	private int width = 483;
@@ -28,60 +25,66 @@ public class CaptureDialog extends WindowAdapter implements ActionListener {
 	private TextArea messageText = null;
 	private String attachment = null;
 	
-	public CaptureDialog() {
-		frame = new Frame("Email Sender");
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				frame.setVisible(false);
-			}
-		});
-		
-		frame.setBackground(new Color(234, 234, 234));
+	public CaptureDialog(Frame frame) {
+		super(frame);
+		this.setTitle("Email Sender");		
+		this.setBackground(new Color(234, 234, 234));
 
-		Label addressLabel = new Label("Send To:");
+		Label addressLabel = new Label("Alamat Email: (pisah dengan koma ',')");
 		addressField = new TextField(60);		
 
-		Label messageLabel = new Label("Message:");
+		Label messageLabel = new Label("Pesan Email:");
 		messageText = new TextArea();
 		messageText.setColumns(20);
 		
-		Button sendButton = new Button("Send Email");
+		Button sendButton = new Button("Kirim Email");
 		sendButton.addActionListener(this);
-
-		frame.add(addressLabel);
-		frame.add(addressField);
-
-		frame.add(messageLabel);
-		frame.add(messageText);
 		
-		//frame.add(new Label());
-		frame.add(sendButton);
+		Button cancelButton = new Button("Batal");
+		cancelButton.addActionListener(e -> {
+			try {
+				this.setVisible(false);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 
-		frame.pack();
-		frame.setLayout(new FlowLayout(10, 10, 5));		
-		frame.setSize(width, heigh);
-		frame.setLocation((screenSize.width / 5) * 2, (screenSize.height / 6) * 2);		
-		frame.setVisible(false);
+		this.add(addressLabel);
+		this.add(addressField);
+
+		this.add(messageLabel);
+		this.add(messageText);
+		
+		this.add(sendButton);
+		this.add(cancelButton);
+
+		this.pack();
+		this.setLayout(new FlowLayout(10, 10, 5));		
+		this.setSize(width, heigh);
+		this.setLocation((screenSize.width / 5) * 2, (screenSize.height / 6) * 2);		
+		this.setVisible(false);
+		this.toFront();
 	}
 	
 	public void sendEmail(String attachment) {
 		try {
-			frame.setVisible(true);
+			
+			addressField.setText("");
+			messageText.setText("");
+			
+			this.setVisible(true);
 			this.attachment = attachment;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void main(String args[]) {
-		new CaptureDialog();
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {						
 
-			frame.setVisible(false);
+			this.setVisible(false);
 						
 			new Thread(new SendEmailAttachment(addressField.getText(), 
 							messageText.getText(), attachment)).start();

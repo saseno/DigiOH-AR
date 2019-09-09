@@ -3,34 +3,35 @@ package dev.saseno.jakarta.digioh.email;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
-import javax.mail.Store;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import com.sun.mail.smtp.SMTPTransport;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 public class SendEmailAttachment implements Runnable {
 
-	private static final String SMTP_SERVER = "smtp.gmail.com";
-	private static final String USERNAME = "";
-	private static final String PASSWORD = "";
-	
-	private static final String EMAIL_SUBJECT = "DigiOH Augmented Reality Email Sender";
+	private static final String USERNAME 	= "";
+	private static final String PASSWORD 	= "";	
 
+	private static final String NAME_SENDER   = "Digi Selfie 2019";
+	private static final String EMAIL_SENDER  = "digiselfie.id@gmail.com";
+	private static final String EMAIL_SUBJECT = "DigiOH Augmented Reality Email Sender";
+	
+	private static String EMAIL_FOOTER = "\n\n------\nDigi Selfie - 2019"; //additional footer...
+
+	private static final String SMTP_SERVER = "smtp.gmail.com";
 	private Properties props = null;
 	private Session session = null;	
 	
-	private String toAddress = null;
+	private String[] toAddress = null;
 	private String message = null;
 	private String photoPath = null;
 	
@@ -43,34 +44,21 @@ public class SendEmailAttachment implements Runnable {
 	        props.put("mail.smtp.password", PASSWORD);
 	        props.put("mail.smtp.host", SMTP_SERVER);
 		    
-		    props.put("mail.transport.protocol", "smtp");
+		    props.put("mail.transport.protocol", "smtps");
 			props.put("mail.smtp.port", "587");
 	        props.put("mail.smtp.auth", "true");
 	        props.put("mail.smtp.starttls.enable", "true"); //TLS
-	        props.put("mail.smtp.ssl.trust", SMTP_SERVER);
-	        		    	        
-//		    props.put("mail.smtp.host", "smtp.gmail.com");
-//		    props.put("mail.smtp.port", "465");
-//		    props.put("mail.smtp.auth", "true");
-//		    props.put("mail.smtp.socketFactory.port", "465");
-//		    props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-
-//	        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-//	        props.put("mail.smtp.socketFactory.fallback", "false");
-//	        props.put("mail.smtp.port", "465");
-//	        props.put("mail.smtp.socketFactory.port", "465");
-//	        props.put("mail.smtp.auth", "true");
+	        props.put("mail.smtp.ssl.trust", SMTP_SERVER);	        		    	        
 	        
 			session = Session.getInstance(props, new javax.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(USERNAME, PASSWORD);
                 }
             });
-
-//			session = Session.getDefaultInstance(props);			
+		
 			session.setDebug(true);
 			
-			this.toAddress 	= toAddress;
+			this.toAddress 	= toAddress.split(",");
 			this.message 	= message;
 			this.photoPath 	= photoPath;
 						
@@ -78,27 +66,44 @@ public class SendEmailAttachment implements Runnable {
 			e.printStackTrace();
 		}
 	}
-		
+
+	private InternetAddress[] getAddresses(String[] inputAddresses) {
+		ArrayList<InternetAddress> result = new ArrayList<>();
+		try {
+			for (String address : inputAddresses) {
+				try {
+					result.addAll(Arrays.asList(InternetAddress.parse(address.trim(), false)));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result.toArray(new InternetAddress[0]);
+	}
+
 	public void sendEmail() {
 
 		try {
 
 			System.err.println("----------------------");
-			System.err.println("Email Sender");
+			System.err.println("Email Sender Start");
 			System.err.println("----------------------");
 
-			System.err.println(">> " + toAddress);
-			System.err.println(">> " + message);
-			System.err.println(">> " + photoPath);			
+			//System.err.println(">> " + toAddress);
+			//System.err.println(">> " + message);
+			//System.err.println(">> " + photoPath);			
 			
 			MimeMessage msg = new MimeMessage(session);
-			msg.setFrom(new InternetAddress(USERNAME));
-			msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toAddress, false));
+			msg.setFrom(new InternetAddress(EMAIL_SENDER, NAME_SENDER));
+			msg.setRecipients(Message.RecipientType.TO, getAddresses(toAddress));
 			msg.setSubject(EMAIL_SUBJECT);
 
 			// text
 			MimeBodyPart p1 = new MimeBodyPart();
-			p1.setText(message);
+			p1.setText(message + EMAIL_FOOTER);
 			
 			MimeBodyPart p2 = null;			
 			if (photoPath != null) {
@@ -117,19 +122,11 @@ public class SendEmailAttachment implements Runnable {
 
 			msg.setContent(mp);
 			msg.saveChanges();
-			
-//			Transport.send(msg);	
-
-			SMTPTransport smtpTransport = new SMTPTransport(session, null);
-			smtpTransport.connect(SMTP_SERVER, USERNAME, PASSWORD);
-            //smtpTransport.issueCommand("AUTH XOAUTH2 " + new String(BASE64EncoderStream.encode(String.format("user=%s\1auth=Bearer %s\1\1", smtpUserName, smtpUserAccessToken).getBytes())), 235);
-            smtpTransport.sendMessage(msg, msg.getAllRecipients());
-            smtpTransport.close();
             
-//			Transport transport = session.getTransport("smtp");
-//			transport.connect(SMTP_SERVER, USERNAME, PASSWORD);
-//			transport.sendMessage(msg, msg.getAllRecipients());
-//			transport.close();
+			Transport transport = session.getTransport("smtps");
+			transport.connect(SMTP_SERVER, USERNAME, PASSWORD);
+			transport.sendMessage(msg, msg.getAllRecipients());
+			transport.close();
 			
 			System.err.println("----------------------");
 			System.err.println("Email Sender OK");

@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -86,7 +88,7 @@ public class App extends GlSketch {
 	private Graphics graphics = null;
 
 	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
-	private CaptureDialog captureDialog = new CaptureDialog();
+	private CaptureDialog captureDialog;
 
 	public App(int i_width, int i_height, boolean useCamera) {
 		super(i_width, i_height);
@@ -180,6 +182,8 @@ public class App extends GlSketch {
 		if (useCamera) {
 			camera.open();
 		}
+		
+		captureDialog = new CaptureDialog(frame);
 	}
 
 	private void updateRotation() {
@@ -256,31 +260,22 @@ public class App extends GlSketch {
 			}
 
 			Thread.sleep(1);
-			
-			
+						
 			if ((startCaptureScreen >= 0)) {
 
 				if (startCaptureScreen == 0) {
 					//System.err.println("--> captured...");
 					startCaptureScreen = -1;
-
-					// waterMarkTextRenderer.beginRendering(cameraDimension.width,
-					// cameraDimension.height);
-					// waterMarkTextRenderer.draw("datetime: " + dateFormat.format(new Date()), 0, 0);
-					// waterMarkTextRenderer.endRendering();
-
 					saveScreenShot(gl);
 					
 				} else {
 					
-					//gl.getGL2().glPushMatrix();
 					textRenderer.beginRendering(cameraDimension.width, cameraDimension.height);
-					textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);					
+					//textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);					
 					textRenderer.draw("" + startCaptureScreen, (cameraDimension.width / 10) * 3,
 							(cameraDimension.height / 7) * 1);
 					textRenderer.endRendering();
-					textRenderer.flush();
-					//gl.getGL2().glPopMatrix();					
+					textRenderer.flush();					
 
 				}
 
@@ -298,10 +293,11 @@ public class App extends GlSketch {
 	
 	private void saveScreenShot(GL gl) {
 
-		try {
-
-			graphics = screenshot.getGraphics();
+		try {		
+			
+			graphics = screenshot.getGraphics();			
 			snapShotBuffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
+			
 			gl.getGL2().glReadBuffer(GL2.GL_FRONT_AND_BACK);
 			gl.getGL2().glReadPixels(0, 0, cameraDimension.width, cameraDimension.height, GL2.GL_RGBA,
 					GL2.GL_UNSIGNED_BYTE, snapShotBuffer);
@@ -324,7 +320,16 @@ public class App extends GlSketch {
 			String fileLocation = "photos/DigiOH-AR_" + dateFormat.format(new Date()) + ".png";
 			File outputfile = new File(fileLocation);
 			outputfile.mkdirs();
-
+			
+			try {
+				AffineTransform tx = AffineTransform.getScaleInstance(-1, -1);
+				tx.translate(-screenshot.getWidth(null), -screenshot.getHeight(null));
+				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				screenshot = op.filter(screenshot, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 			ImageIO.write(screenshot, "png", outputfile);
 			uploadPhoto(fileLocation);			
 
@@ -383,7 +388,7 @@ public class App extends GlSketch {
 		if (e.getClickCount() == 2) {
 			//prevent double click if one already running
 			if (startCaptureScreen == -1) {
-				startCaptureScreen = 1; //5;
+				startCaptureScreen = 5;
 				startCaptureScreenTime = System.currentTimeMillis();
 			}
 		}

@@ -28,8 +28,8 @@
 			<groupId>com.sun.mail</groupId>
 			<artifactId>javax.mail-api</artifactId>
 			<scope>system</scope>
-			<systemPath>${basedir}\lib\javax.mail-1.4.5.jar</systemPath>
-			<version>1.4.5</version>
+			<systemPath>${basedir}\lib\javax.mail-1.6.0.jar</systemPath>
+			<version>1.6.0</version>
 		</dependency>
 	
 		<!-- 
@@ -202,7 +202,7 @@
 											
 						<manifestEntries>
 							<!-- <Class-Path>.</Class-Path> -->
-							<Class-Path>. lib/NyARToolkit-0.0.1-SNAPSHOT.jar lib/jogl-all-2.3.2.jar lib/bridj-0.6.2.jar lib/slf4j-api-1.7.2.jar lib/webcam-capture-0.3.12.jar lib/gluegen-rt-2.3.2.jar lib/jogl-all-natives-windows-i586-0.0.1-SNAPSHOT.jar lib/jogl-all-natives-windows-amd64-0.0.1-SNAPSHOT.jar lib/javax.mail-1.4.5.jar</Class-Path>
+							<Class-Path>. lib/NyARToolkit-0.0.1-SNAPSHOT.jar lib/jogl-all-2.3.2.jar lib/bridj-0.6.2.jar lib/slf4j-api-1.7.2.jar lib/webcam-capture-0.3.12.jar lib/gluegen-rt-2.3.2.jar lib/jogl-all-natives-windows-i586-0.0.1-SNAPSHOT.jar lib/jogl-all-natives-windows-amd64-0.0.1-SNAPSHOT.jar lib/javax.mail-1.6.0.jar</Class-Path>
 						</manifestEntries>
 						
 					</archive>	
