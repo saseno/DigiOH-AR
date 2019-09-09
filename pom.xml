@@ -23,14 +23,22 @@
 	</properties>
 	
 	<dependencies>
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\javax.mail-api-1.6.2.jar</systemPath>
+			<version>1.6.2</version>
+		</dependency>
 	
-<!-- 
-<dependency>
-  <groupId>org.brunocvcunha.instagram4j</groupId>
-  <artifactId>instagram4j</artifactId>
-  <version>1.12</version>
-</dependency>
-	-->
+		<!-- 
+		<dependency>
+		  <groupId>org.brunocvcunha.instagram4j</groupId>
+		  <artifactId>instagram4j</artifactId>
+		  <version>1.12</version>
+		</dependency>
+		-->
 	
 		<!-- 
 		<dependency>

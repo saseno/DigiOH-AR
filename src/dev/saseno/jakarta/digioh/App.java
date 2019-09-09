@@ -5,12 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -24,13 +20,8 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.awt.TextRenderer;
-import com.restfb.BinaryAttachment;
-import com.restfb.DefaultFacebookClient;
-import com.restfb.FacebookClient;
-import com.restfb.Version;
-import com.restfb.types.FacebookType;
-import com.restfb.types.User;
 
+import dev.saseno.jakarta.digioh.email.CaptureDialog;
 import dev.saseno.jakarta.digioh.io.utils.NyARGlMarkerSystem;
 import dev.saseno.jakarta.digioh.io.utils.NyARGlRender;
 import dev.saseno.jakarta.digioh.jogl2.GlSketch;
@@ -87,7 +78,7 @@ public class App extends GlSketch {
 	private TextRenderer textRenderer = null;
 	private TextRenderer waterMarkTextRenderer = null;
 
-	private int startCaptureScreen = 0;
+	private int startCaptureScreen = -1;
 	private long startCaptureScreenTime = 0;
 
 	private ByteBuffer snapShotBuffer = null;
@@ -95,6 +86,7 @@ public class App extends GlSketch {
 	private Graphics graphics = null;
 
 	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+	private CaptureDialog captureDialog = new CaptureDialog();
 
 	public App(int i_width, int i_height, boolean useCamera) {
 		super(i_width, i_height);
@@ -119,34 +111,6 @@ public class App extends GlSketch {
 
 		initInstagram();
 	}
-
-//	public static void main(String[] args) {
-//		
-//		int w0 = 320; //640;
-//		int h0 = 240; //480;
-//		
-//		boolean userInputCamera = true;
-//		
-//		for (String arg : args) {
-//			if ("camera".equals(arg.trim())) {
-//				userInputCamera = true;
-//			}
-//		}
-//			
-//		System.err.println("------------------");
-//		System.err.println("START APP");
-//		System.err.println("------------------");
-//		
-//		App digiOhApp = new App(w0, h0, userInputCamera);
-//		
-//		if (userInputCamera) {
-//			digiOhApp.run2();
-//		} else {
-//			digiOhApp.run();
-//		}
-//		
-//		return;
-//	}
 
 	private void initModel() {
 
@@ -198,11 +162,11 @@ public class App extends GlSketch {
 		sensor = new NyARSensor(config.getScreenSize());
 
 		id = nyar.addARMarker(getClass().getResourceAsStream(ARCODE_FILE), 16, 25, 80);
-		id_samsung = nyar.addARMarker(getClass().getResourceAsStream(patt_samsung), 16, 25, 80);
-		id_digiOH = nyar.addARMarker(getClass().getResourceAsStream(patt_digiOH), 16, 25, 80);
-		id_cloud = nyar.addARMarker(getClass().getResourceAsStream(patt_cloud), 16, 25, 80);
-		id_insta = nyar.addARMarker(getClass().getResourceAsStream(patt_insta), 16, 25, 80);
-		id_twitter = nyar.addARMarker(getClass().getResourceAsStream(patt_twitter), 16, 25, 80);
+		id_samsung 	= nyar.addARMarker(getClass().getResourceAsStream(patt_samsung), 16, 25, 80);
+		id_digiOH 	= nyar.addARMarker(getClass().getResourceAsStream(patt_digiOH), 16, 25, 80);
+		id_cloud 	= nyar.addARMarker(getClass().getResourceAsStream(patt_cloud), 16, 25, 80);
+		id_insta 	= nyar.addARMarker(getClass().getResourceAsStream(patt_insta), 16, 25, 80);
+		id_twitter 	= nyar.addARMarker(getClass().getResourceAsStream(patt_twitter), 16, 25, 80);
 
 		textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, cameraDimension.height));
 		waterMarkTextRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
@@ -229,19 +193,21 @@ public class App extends GlSketch {
 	protected boolean isMirrored() {
 		return mirror;
 	}
+	
+	private void updateImageRaster() {
+		if (useCamera) {
+			imgRaster = new NyARBufferedImageRaster(camera.getImage());
+		} else {
+			imgRaster = testImg;
+		}
+	}
 
 	public void draw(GL gl) throws Exception {
 		// synchronized (camera) {
 		try {
 
 			updateRotation();
-
-			if (useCamera) {
-				imgRaster = new NyARBufferedImageRaster(camera.getImage());
-			} else {
-				imgRaster = testImg;
-			}
-
+			updateImageRaster();
 			sensor.update(imgRaster);
 
 			if (sensor.getSourceImage() == null) {
@@ -249,21 +215,19 @@ public class App extends GlSketch {
 				return;
 			}
 
-			render.drawBackground(gl, sensor.getSourceImage(), isMirrored(), cameraDimension.getWidth(),
-					cameraDimension.getHeight());
+			render.drawBackground(gl, sensor.getSourceImage(), isMirrored(), cameraDimension.getWidth(), cameraDimension.getHeight());			
+			render.loadARProjectionMatrix(gl, isMirrored());
 			
-			render.loadARProjectionMatrix(gl, isMirrored());			
 			nyar.update(sensor);
 
 			if (nyar.isExist(id)) {
 				nyar.loadTransformMatrix(gl, id);
 				// render.colorCube(gl, 50, 0, 0, 20, rquad);
-				// render.renderModel(gl, 60, 0, 0, rquad, modelLove);
-				// render.renderModel(gl, 60, 0, 0, rquad, modelClient);
+				render.renderModel(gl, 60, 0, 0, rquad, modelLove);
+				//render.renderModel(gl, 60, 0, 0, rquad, modelClient);
 
 				// render.drawText(gl, 0, 0, 20, rquad, "test 123");
-				// render.renderModel(gl, 0, 0, 20, rquad, modelMoon);
-				render.renderModel(gl, 0, 0, 0, rquad, modelPatung);
+				//render.renderModel(gl, 0, 0, 0, rquad, modelPatung);
 			}
 
 			if (nyar.isExist(id_cloud)) {
@@ -297,17 +261,17 @@ public class App extends GlSketch {
 			if ((startCaptureScreen >= 0)) {
 
 				if (startCaptureScreen == 0) {
-					System.err.println("--> captured...");
+					//System.err.println("--> captured...");
 					startCaptureScreen = -1;
 
 					// waterMarkTextRenderer.beginRendering(cameraDimension.width,
 					// cameraDimension.height);
-					// waterMarkTextRenderer.draw("datetime: " + dateFormat.format(new Date()), 0,
-					// 0);
+					// waterMarkTextRenderer.draw("datetime: " + dateFormat.format(new Date()), 0, 0);
 					// waterMarkTextRenderer.endRendering();
 
 					saveScreenShot(gl);
-
+					captureDialog.showWindow();
+					
 				} else {
 					
 					//gl.getGL2().glPushMatrix();
@@ -318,17 +282,7 @@ public class App extends GlSketch {
 							(cameraDimension.height / 7) * 1);
 					textRenderer.endRendering();
 					textRenderer.flush();
-					//gl.getGL2().glPopMatrix();
-					
-			        gl.glEnable(GL2.GL_TEXTURE_2D);
-			        gl.glDisable(GL2.GL_LIGHT0);
-			        gl.glDisable(GL2.GL_LIGHTING); 
-					
-//					textRenderer.begin3DRendering();
-//			        String s = "" + startCaptureScreen; 
-//			        final float scale = 50f;
-//			        textRenderer.draw3D("" + startCaptureScreen, (float) (cameraDimension.width / 10) * 3, (float) (cameraDimension.height / 7) * 1, 0, scale);
-//			        textRenderer.end3DRendering();
+					//gl.getGL2().glPopMatrix();					
 
 				}
 
@@ -347,9 +301,6 @@ public class App extends GlSketch {
 	private void saveScreenShot(GL gl) {
 
 		try {
-			// BufferedImage screenshot = new BufferedImage(cameraDimension.width,
-			// cameraDimension.height, BufferedImage.TYPE_INT_RGB);
-			// Graphics graphics = screenshot.getGraphics();
 
 			graphics = screenshot.getGraphics();
 			snapShotBuffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
@@ -361,11 +312,14 @@ public class App extends GlSketch {
 
 			for (int h = 0; h < cameraDimension.height; h++) {
 				for (int w = 0; w < cameraDimension.width; w++) {
-					graphics.setColor(new Color((snapShotBuffer.get() & 0xff), (snapShotBuffer.get() & 0xff),
-							(snapShotBuffer.get() & 0xff)));
-					snapShotBuffer.get(); // consume alpha
 
-					// graphics.translate(w >> 1, h >> 1);
+					graphics.setColor(new Color(
+							(snapShotBuffer.get() & 0xff), 
+							(snapShotBuffer.get() & 0xff),
+							(snapShotBuffer.get() & 0xff)));
+					
+					snapShotBuffer.get(); // consume alpha
+					
 					graphics.drawRect(w, h, 1, 1);
 					// graphics.drawRect(w, cameraDimension.height - h, 1, 1);
 				}
@@ -433,10 +387,11 @@ public class App extends GlSketch {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
-			System.err.println("--> double clicked");
-
-			startCaptureScreen = 5;
-			startCaptureScreenTime = System.currentTimeMillis();
+			//prevent double click if one already running
+			if (startCaptureScreen == -1) {
+				startCaptureScreen = 5;
+				startCaptureScreenTime = System.currentTimeMillis();
+			}
 		}
 	}
 

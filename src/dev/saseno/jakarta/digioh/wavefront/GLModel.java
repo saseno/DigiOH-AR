@@ -93,7 +93,7 @@ public abstract class GLModel {
 				//gl.glUseProgram(arg0);
 
 		        gl.glEnable(GL2.GL_TEXTURE_2D);
-		        gl.glDisable(GL2.GL_LIGHT0);
+		        gl.glEnable(GL2.GL_LIGHT0);
 		        gl.glDisable(GL2.GL_LIGHTING); 
 		        
 				texture.enable(gl);

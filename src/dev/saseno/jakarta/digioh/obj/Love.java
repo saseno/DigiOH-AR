@@ -9,7 +9,7 @@ import dev.saseno.jakarta.digioh.wavefront.GLModel;
 public class Love extends GLModel {
 	
 	private static final String objectName = "/obj/love/Love.obj";
-	private static final String textureName = null;
+	private static final String textureName = "/obj/love/Love.png";
 	
 	private float fSize = 4f;
 	
@@ -42,10 +42,18 @@ public class Love extends GLModel {
 		disabledTexture(i_gl.getGL2());		
 	}
 
+
+
 	@Override
 	protected void initTexture(GL2 gl) {
 		try {
-		        
+			
+			super.initTexture(gl);
+			
+			gl.glEnable(GL2.GL_TEXTURE_2D);
+			gl.glEnable(GL2.GL_LIGHT0);
+			gl.glEnable(GL2.GL_LIGHTING);
+			
 			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, mat_ambient, 0);
 			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, mat_ambient_color, 0);
 			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, mat_diffuse, 0);
@@ -53,16 +61,14 @@ public class Love extends GLModel {
 
 			gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 0.5f);
 
-			gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
-			gl.glDisable(GL2.GL_TEXTURE_2D);
-
 			gl.glEnable(GL2.GL_LIGHT0);
 			gl.glEnable(GL2.GL_LIGHTING);
-		        
+
 		} catch (Exception e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			System.err.println("--> initTexture: " + e.getMessage());
 		}
+
 	}
 	
 }

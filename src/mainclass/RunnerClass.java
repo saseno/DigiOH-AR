@@ -9,14 +9,8 @@ public class RunnerClass {
 		int w0 = 320;
 		int h0 = 240;
 		
-		boolean userInputCamera = true;
-		
-		for (String arg : args) {
-			if ("camera".equals(arg.trim())) {
-				userInputCamera = true;
-			}
-		}
-			
+		boolean userInputCamera = false; //isUseCamera(args);
+					
 		System.out.println("------------------");
 		System.out.println("START APP");
 		System.out.println("------------------");
@@ -29,6 +23,20 @@ public class RunnerClass {
 		}
 		
 		return;
+	}
+	
+	@SuppressWarnings("unused")
+	private static boolean isUseCamera(String[] args) {
+		boolean result = false;
+		
+		for (String arg : args) {
+			if ("camera".equals(arg.trim())) {
+				result = true;
+				break;
+			}
+		}
+		
+		return result;
 	}
 	
 }
