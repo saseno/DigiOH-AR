@@ -37,18 +37,18 @@ public class SendEmailAttachment implements Runnable {
 	
 	public SendEmailAttachment(String toAddress, String message, String photoPath) {
 		try {
-			
+
 			props = System.getProperties();
-		    props.put("mail.debug", "true");
-	        props.put("mail.smtp.user", USERNAME);
-	        props.put("mail.smtp.password", PASSWORD);
-	        props.put("mail.smtp.host", SMTP_SERVER);
-		    
-		    props.put("mail.transport.protocol", "smtps");
+			props.put("mail.debug", "true");
+			props.put("mail.smtp.user", USERNAME);
+			props.put("mail.smtp.password", PASSWORD);
+			props.put("mail.smtp.host", SMTP_SERVER);
+
+			props.put("mail.transport.protocol", "smtps");
 			props.put("mail.smtp.port", "587");
-	        props.put("mail.smtp.auth", "true");
-	        props.put("mail.smtp.starttls.enable", "true"); //TLS
-	        props.put("mail.smtp.ssl.trust", SMTP_SERVER);	        		    	        
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.starttls.enable", "true"); // TLS
+			props.put("mail.smtp.ssl.trust", SMTP_SERVER);	        		    	        
 	        
 			session = Session.getInstance(props, new javax.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {

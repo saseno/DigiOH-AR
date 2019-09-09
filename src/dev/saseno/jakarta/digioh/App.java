@@ -30,9 +30,11 @@ import dev.saseno.jakarta.digioh.jogl2.GlSketch;
 import dev.saseno.jakarta.digioh.obj.Client;
 import dev.saseno.jakarta.digioh.obj.Earth;
 import dev.saseno.jakarta.digioh.obj.Love;
+import dev.saseno.jakarta.digioh.obj.Mario;
 import dev.saseno.jakarta.digioh.obj.Mars;
 import dev.saseno.jakarta.digioh.obj.Moon;
 import dev.saseno.jakarta.digioh.obj.Patung;
+import dev.saseno.jakarta.digioh.obj.Plane;
 import jp.nyatla.nyartoolkit.j2se.NyARBufferedImageRaster;
 import jp.nyatla.nyartoolkit.markersystem.NyARMarkerSystemConfig;
 import jp.nyatla.nyartoolkit.markersystem.NyARSensor;
@@ -64,12 +66,14 @@ public class App extends GlSketch {
 
 	private NyARBufferedImageRaster imgRaster = null;
 
-	private Earth modelEarth = null;
-	private Moon modelMoon = null;
-	private Mars modelMars = null;
-	private Love modelLove = null;
-	private Patung modelPatung = null;
-	private Client modelClient = null;
+	private Earth modelEarth 	= null;
+	private Moon modelMoon 		= null;
+	private Mars modelMars 		= null;
+	private Love modelLove 		= null;
+	private Patung modelPatung 	= null;
+	private Client modelClient 	= null;
+	private Plane modelPlane	= null;
+	private Mario modelMario	= null;
 
 	private NyARBufferedImageRaster testImg = null;
 	private BufferedImage img = null;
@@ -122,6 +126,8 @@ public class App extends GlSketch {
 		modelLove = new Love();
 		modelPatung = new Patung();
 		modelClient = new Client();
+		modelPlane = new Plane();
+		modelMario = new Mario();
 	}
 
 	private void initCameraDimension() {
@@ -246,12 +252,14 @@ public class App extends GlSketch {
 
 			if (nyar.isExist(id_insta)) {
 				nyar.loadTransformMatrix(gl, id_insta);
-				render.renderModel(gl, 0, 0, 0, rquad, modelMars);
+				//render.renderModel(gl, 0, 0, 0, rquad, modelMars);
+				//render.renderModel(gl, 0, 0, 0, rquad, modelPlane);
+				render.renderModel(gl, 0, 0, 0, rquad, modelMario);
 			}
 
 			if (nyar.isExist(id_twitter)) {
 				nyar.loadTransformMatrix(gl, id_twitter);
-				render.renderModel(gl, 0, -80, 0, rquad, modelPatung);
+				render.renderModel(gl, 0, -230, 0, rquad, modelPatung);
 			}
 
 			if (nyar.isExist(id_samsung)) {
