@@ -9,7 +9,7 @@ public class RunnerClass {
 		int w0 = 320;
 		int h0 = 240;
 		
-		boolean userInputCamera = false; //isUseCamera(args);
+		boolean userInputCamera = true; //isUseCamera(args);
 					
 		System.out.println("------------------");
 		System.out.println("START APP");

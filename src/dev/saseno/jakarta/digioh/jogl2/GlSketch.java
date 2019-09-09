@@ -46,17 +46,39 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 
 		if (dev.isFullScreenSupported()) {
 			try {
+
+				///////////////////////
+				// automatic select
+				///////////////////////
+				
+				int monitorWidth = 1920;
+				int monitorHeght = 1080;
+				int monitorRefreshRate = 29;
+				
 				java.util.List modes = ScreenResSelector.getAvailableDisplayModes();
-				newMode = (DisplayMode) modes.get(modes.size() - 1);				
+
+				for (Object mode : modes) {
+					if (mode != null && mode instanceof DisplayMode
+							&& (((DisplayMode)mode).getWidth() == monitorWidth)
+							&& (((DisplayMode)mode).getHeight() == monitorHeght)
+							&& (((DisplayMode)mode).getRefreshRate() == monitorRefreshRate)) {
+						
+						newMode = (DisplayMode) mode;
+						break;
+					}
+				}
+				
+				//newMode = (DisplayMode) modes.get(modes.size() - 1);				
 				cameraDimension.setSize(newMode.getWidth(), newMode.getHeight());
 				
-				//newMode = ScreenResSelector.getHighestMode();
+				///////////////////////
+				// use window selection
+				///////////////////////				
 //				newMode = ScreenResSelector.showSelectionDialog();
 //				
 //				if (newMode != null) {										
 //					cameraDimension.setSize(newMode.getWidth(), newMode.getHeight());
-//				}
-				
+//				}				
 				
 			} catch (Exception e) {
 				e.printStackTrace();

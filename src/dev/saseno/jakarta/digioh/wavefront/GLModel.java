@@ -110,9 +110,7 @@ public abstract class GLModel {
 
 		        gl.glPushAttrib(GL2.GL_LIGHTING_BIT);
 		        gl.glDisable(GL2.GL_TEXTURE_2D);
-		        
-//		        gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, 1);
-		        
+		        		        
 		        gl.glEnable(GL2.GL_LIGHT0);
 		        gl.glEnable(GL2.GL_LIGHTING); 
 			}
