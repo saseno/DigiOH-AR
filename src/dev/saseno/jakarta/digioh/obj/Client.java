@@ -13,6 +13,13 @@ public class Client extends GLModel {
 	
 	private float fSize = 100f;
 		
+	protected float[] mat_ambient_color = { 0.1f, 0.1f, 0.5f, 1.0f };
+	protected float[] mat_diffuse 		= { 0.0f, 0.0f, 0.1f, 1.0f };
+	protected float[] mat_specular 		= { 0.0f, 0.0f, 0.1f, 1.0f };
+	protected float[] mat_emission 		= { 0.0f, 0.0f, 0.1f, 1.0f };
+
+	protected float shininess = 0.4f;
+	
 	public Client() {
 		super(objectName, textureName);
 	}
@@ -42,6 +49,16 @@ public class Client extends GLModel {
 			super.initTexture(gl);
 			
 			gl.glEnable(GL2.GL_TEXTURE_2D);
+			gl.glEnable(GL2.GL_LIGHT0);
+			gl.glEnable(GL2.GL_LIGHTING);
+			
+			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, mat_ambient, 0);
+			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, mat_ambient_color, 0);
+			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, mat_diffuse, 0);
+			gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_EMISSION, mat_specular, 0);
+
+			gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 0.5f);
+
 			gl.glEnable(GL2.GL_LIGHT0);
 			gl.glEnable(GL2.GL_LIGHTING);
 

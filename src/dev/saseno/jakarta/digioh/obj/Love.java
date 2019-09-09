@@ -42,8 +42,6 @@ public class Love extends GLModel {
 		disabledTexture(i_gl.getGL2());		
 	}
 
-
-
 	@Override
 	protected void initTexture(GL2 gl) {
 		try {
