@@ -266,8 +266,6 @@ public class App extends GlSketch {
 				nyar.loadTransformMatrix(gl, id_samsung);
 		        render.renderModel(gl, 0, 0, 0, rquad, modelClient);
 			}
-
-			Thread.sleep(1);
 						
 			if ((startCaptureScreen >= 0)) {
 
@@ -293,6 +291,8 @@ public class App extends GlSketch {
 					startCaptureScreenTime = System.currentTimeMillis();
 				}
 			}
+
+			Thread.sleep(1);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -324,7 +324,7 @@ public class App extends GlSketch {
 				}
 			}
 
-			snapShotBuffer.clear();
+			//snapShotBuffer.clear();
 
 			String fileLocation = "photos/DigiOH-AR_" + dateFormat.format(new Date()) + ".png";
 			File outputfile = new File(fileLocation);
@@ -370,8 +370,9 @@ public class App extends GlSketch {
 
 	private void uploadPhoto(String fileLocation) {
 		try {
-			captureDialog.sendEmail(cameraDimension, fileLocation);
-			
+			if (captureDialog != null) {
+				captureDialog.sendEmail(cameraDimension, fileLocation);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -394,17 +395,10 @@ public class App extends GlSketch {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.err.println("--> clicked: " + e.getClickCount());
 		
-		if (e.getClickCount() >= 2) {
-			
-			System.err.println("--> clicked: " + e.getClickCount());
-			System.err.println("--> startCaptureScreen: " + startCaptureScreen);
-			
-			if (startCaptureScreen < 0) {
-				startCaptureScreen = 5;
-				startCaptureScreenTime = System.currentTimeMillis();
-			}
+		if (e.getClickCount() >= 2 && startCaptureScreen < 0) {
+			startCaptureScreen = 5;
+			startCaptureScreenTime = System.currentTimeMillis();
 		}
 	}
 

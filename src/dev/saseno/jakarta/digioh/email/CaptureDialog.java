@@ -9,12 +9,9 @@ import java.awt.Frame;
 import java.awt.Label;
 import java.awt.TextArea;
 import java.awt.TextField;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class CaptureDialog extends Dialog implements ActionListener {
+public class CaptureDialog extends Dialog {
 			
 	private int width = 483;
 	private int heigh = 350;
@@ -25,8 +22,10 @@ public class CaptureDialog extends Dialog implements ActionListener {
 	
 	public CaptureDialog(Frame frame) {
 		super(frame);
-		this.setTitle("Email Sender");		
-		this.setBackground(new Color(234, 234, 234));
+		
+		setModalityType(ModalityType.TOOLKIT_MODAL);		
+		setTitle("Email Sender");		
+		setBackground(new Color(234, 234, 234));
 
 		Label addressLabel = new Label("Alamat Email: (pisah dengan koma ',')");
 		addressField = new TextField(60);		
@@ -36,7 +35,17 @@ public class CaptureDialog extends Dialog implements ActionListener {
 		messageText.setColumns(20);
 		
 		Button sendButton = new Button("Kirim Email");
-		sendButton.addActionListener(this);
+		sendButton.addActionListener(e -> {
+			try {						
+
+				this.setVisible(false);						
+				new Thread(new SendEmailAttachment(addressField.getText(), 
+								messageText.getText(), attachment)).start();
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}		
+		});
 		
 		Button cancelButton = new Button("Batal");
 		cancelButton.addActionListener(e -> {
@@ -47,20 +56,19 @@ public class CaptureDialog extends Dialog implements ActionListener {
 			}
 		});
 
-		this.add(addressLabel);
-		this.add(addressField);
+		add(addressLabel);
+		add(addressField);
 
-		this.add(messageLabel);
-		this.add(messageText);
+		add(messageLabel);
+		add(messageText);
 		
-		this.add(sendButton);
-		this.add(cancelButton);
+		add(sendButton);
+		add(cancelButton);
 
-		this.pack();
-		this.setLayout(new FlowLayout(10, 10, 5));		
-		this.setSize(width, heigh);		
-		this.setVisible(false);
-		this.toFront();
+		pack();
+		setLayout(new FlowLayout(10, 10, 5));		
+		setSize(width, heigh);		
+		setVisible(false);
 	}
 	
 	public void sendEmail(Dimension dimension, String attachment) {
@@ -68,27 +76,15 @@ public class CaptureDialog extends Dialog implements ActionListener {
 			
 			addressField.setText("");
 			messageText.setText("");
-			
-			this.setLocation((dimension.width / 5) * 2, (dimension.height / 6) * 2);
-			this.setVisible(true);
+
 			this.attachment = attachment;
+			setLocation((dimension.width / 5) * 2, (dimension.height / 6) * 2);
+			setVisible(true);
+			toFront();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		try {						
-
-			this.setVisible(false);						
-			new Thread(new SendEmailAttachment(addressField.getText(), 
-							messageText.getText(), attachment)).start();
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-	}
 }

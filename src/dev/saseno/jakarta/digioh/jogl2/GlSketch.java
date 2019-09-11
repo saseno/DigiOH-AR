@@ -103,7 +103,7 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 		frame.setResizable(false);
 		
 		if (dev.isFullScreenSupported() && (newMode != null)) {
-			dev.setFullScreenWindow(frame);
+			//dev.setFullScreenWindow(frame);
 			if (dev.isDisplayChangeSupported()) {
 				dev.setDisplayMode(newMode);
 				
