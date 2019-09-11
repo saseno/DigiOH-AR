@@ -75,16 +75,7 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 				
 				//newMode = (DisplayMode) modes.get(modes.size() - 1);				
 				cameraDimension.setSize(newMode.getWidth(), newMode.getHeight());
-				
-				///////////////////////
-				// use window selection
-				///////////////////////				
-//				newMode = ScreenResSelector.showSelectionDialog();
-//				
-//				if (newMode != null) {										
-//					cameraDimension.setSize(newMode.getWidth(), newMode.getHeight());
-//				}				
-				
+							
 			} catch (Exception e) {
 				e.printStackTrace();
 
@@ -117,23 +108,10 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 				dev.setDisplayMode(newMode);
 				
 			} else {
-				// Not much point in having a full-screen window in this case
 				dev.setFullScreenWindow(null);
-				final Frame f2 = frame;
-				try {
-					EventQueue.invokeAndWait(() -> {
-						
-						f2.setVisible(false);
-						f2.setUndecorated(false);
-						f2.setVisible(true);
-						f2.setSize(cameraDimension.width, cameraDimension.height);
-						f2.toFront();
-						
-					});
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				System.err.println("---------------------------------------------------------------");
 				System.err.println("NOTE: was not able to change display mode; full-screen disabled");
+				System.err.println("---------------------------------------------------------------");
 			}
 		}
 		

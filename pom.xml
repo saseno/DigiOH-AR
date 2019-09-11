@@ -25,6 +25,14 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>slf4j-simple</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\slf4j-simple-1.7.28.jar</systemPath>
+			<version>1.7.28</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.sun.mail</groupId>
 			<artifactId>javax.mail</artifactId>
 			<scope>system</scope>
@@ -202,7 +210,7 @@
 											
 						<manifestEntries>
 							<!-- <Class-Path>.</Class-Path> -->
-							<Class-Path>. lib/NyARToolkit-0.0.1-SNAPSHOT.jar lib/jogl-all-2.3.2.jar lib/bridj-0.6.2.jar lib/slf4j-api-1.7.2.jar lib/webcam-capture-0.3.12.jar lib/gluegen-rt-2.3.2.jar lib/jogl-all-natives-windows-i586-0.0.1-SNAPSHOT.jar lib/jogl-all-natives-windows-amd64-0.0.1-SNAPSHOT.jar lib/javax.mail-1.6.0.jar</Class-Path>
+							<Class-Path>. lib/NyARToolkit-0.0.1-SNAPSHOT.jar lib/jogl-all-2.3.2.jar lib/bridj-0.6.2.jar lib/slf4j-api-1.7.2.jar lib/webcam-capture-0.3.12.jar lib/gluegen-rt-2.3.2.jar lib/jogl-all-natives-windows-i586-0.0.1-SNAPSHOT.jar lib/jogl-all-natives-windows-amd64-0.0.1-SNAPSHOT.jar lib/javax.mail-1.6.0.jar lib/slf4j-simple-1.7.28.jar</Class-Path>
 						</manifestEntries>
 						
 					</archive>	

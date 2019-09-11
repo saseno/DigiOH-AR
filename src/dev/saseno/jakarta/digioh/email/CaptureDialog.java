@@ -15,9 +15,7 @@ import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
 public class CaptureDialog extends Dialog implements ActionListener {
-		
-	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	
+			
 	private int width = 483;
 	private int heigh = 350;
 	
@@ -60,18 +58,18 @@ public class CaptureDialog extends Dialog implements ActionListener {
 
 		this.pack();
 		this.setLayout(new FlowLayout(10, 10, 5));		
-		this.setSize(width, heigh);
-		this.setLocation((screenSize.width / 5) * 2, (screenSize.height / 6) * 2);		
+		this.setSize(width, heigh);		
 		this.setVisible(false);
 		this.toFront();
 	}
 	
-	public void sendEmail(String attachment) {
+	public void sendEmail(Dimension dimension, String attachment) {
 		try {
 			
 			addressField.setText("");
 			messageText.setText("");
 			
+			this.setLocation((dimension.width / 5) * 2, (dimension.height / 6) * 2);
 			this.setVisible(true);
 			this.attachment = attachment;
 			
@@ -84,8 +82,7 @@ public class CaptureDialog extends Dialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		try {						
 
-			this.setVisible(false);
-						
+			this.setVisible(false);						
 			new Thread(new SendEmailAttachment(addressField.getText(), 
 							messageText.getText(), attachment)).start();
 

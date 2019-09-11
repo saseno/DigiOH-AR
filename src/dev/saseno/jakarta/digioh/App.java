@@ -370,7 +370,7 @@ public class App extends GlSketch {
 
 	private void uploadPhoto(String fileLocation) {
 		try {
-			captureDialog.sendEmail(fileLocation);
+			captureDialog.sendEmail(cameraDimension, fileLocation);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -394,9 +394,14 @@ public class App extends GlSketch {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount() == 2) {
-			//prevent double click if one already running
-			if (startCaptureScreen == -1) {
+		System.err.println("--> clicked: " + e.getClickCount());
+		
+		if (e.getClickCount() >= 2) {
+			
+			System.err.println("--> clicked: " + e.getClickCount());
+			System.err.println("--> startCaptureScreen: " + startCaptureScreen);
+			
+			if (startCaptureScreen < 0) {
 				startCaptureScreen = 5;
 				startCaptureScreenTime = System.currentTimeMillis();
 			}
