@@ -120,14 +120,14 @@ public class App extends GlSketch {
 
 	private void initModel() {
 
-		modelEarth = new Earth();
-		modelMoon = new Moon();
-		modelMars = new Mars();
-		modelLove = new Love();
+		modelEarth 	= new Earth();
+		modelMoon 	= new Moon();
+		modelMars 	= new Mars();
+		modelLove 	= new Love();
 		modelPatung = new Patung();
 		modelClient = new Client();
-		modelPlane = new Plane();
-		modelMario = new Mario();
+		modelPlane 	= new Plane();
+		modelMario 	= new Mario();
 	}
 
 	private void initCameraDimension() {
@@ -138,19 +138,30 @@ public class App extends GlSketch {
 			System.err.println("------------------");
 
 			for (Webcam webCam : Webcam.getWebcams()) {
+				System.err.println("------------------");
 				System.err.println("--> webCam: " + webCam);
+				System.err.println("------------------");
+
+				for (Dimension dim : webCam.getViewSizes()) {
+					System.err.println("--> cameraDimension: " + dim);
+					if (cameraDimension.height < dim.height && cameraDimension.width < dim.width) {
+						cameraDimension = dim;
+					}
+				}
 			}
 
 			camera = Webcam.getDefault();
 			cameraDimension = camera.getViewSize();
 
 			for (Dimension dim : camera.getViewSizes()) {
-				System.err.println("--> cameraDimension: " + dim);
+				//System.err.println("--> cameraDimension: " + dim);
 				if (cameraDimension.height < dim.height && cameraDimension.width < dim.width) {
 					cameraDimension = dim;
 				}
 			}
 
+			System.err.println("------------------");
+			System.err.println("Use Dimension: " + cameraDimension);
 			System.err.println("------------------");
 			camera.setViewSize(cameraDimension);
 
