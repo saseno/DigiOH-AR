@@ -82,8 +82,6 @@ public class App extends GlSketch {
 	private String tempTestImg = "/320x240ABGR.png";
 
 	private TextRenderer textRenderer = null;
-	private TextRenderer waterMarkTextRenderer = null;
-
 	private int startCaptureScreen = -1;
 	private long startCaptureScreenTime = 0;
 
@@ -177,7 +175,6 @@ public class App extends GlSketch {
 		id_twitter 	= nyar.addARMarker(getClass().getResourceAsStream(patt_twitter), 16, 25, 80);
 
 		textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, cameraDimension.height));
-		waterMarkTextRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
 
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		initModel();
@@ -213,7 +210,7 @@ public class App extends GlSketch {
 	}
 
 	public void draw(GL gl) throws Exception {
-		// synchronized (camera) {
+		synchronized (camera) {
 		try {
 
 			updateRotation();
@@ -273,17 +270,16 @@ public class App extends GlSketch {
 					//System.err.println("--> captured...");
 					startCaptureScreen = -1;
 					saveScreenShot(gl);
-					
-				} else {
+
+				} else if (startCaptureScreen > 0) {
 
 			        gl.getGL2().glDisable(GL2.GL_TEXTURE_2D);
 					textRenderer.beginRendering(cameraDimension.width, cameraDimension.height);
 					textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);					
 					textRenderer.draw("" + startCaptureScreen, (cameraDimension.width / 10) * 3,
 							(cameraDimension.height / 7) * 1);
-					textRenderer.endRendering();
-					//textRenderer.flush();					
-
+					textRenderer.endRendering();					
+					
 				}
 
 				if ((System.currentTimeMillis() - startCaptureScreenTime >= 1200)) {
@@ -297,7 +293,7 @@ public class App extends GlSketch {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// }
+		}
 	}
 	
 	private void saveScreenShot(GL gl) {
@@ -335,6 +331,7 @@ public class App extends GlSketch {
 				tx.translate(-screenshot.getWidth(null), -screenshot.getHeight(null));
 				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 				screenshot = op.filter(screenshot, null);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
