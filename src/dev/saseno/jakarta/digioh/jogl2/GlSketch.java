@@ -2,7 +2,6 @@ package dev.saseno.jakarta.digioh.jogl2;
 
 import java.awt.Dimension;
 import java.awt.DisplayMode;
-import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -28,6 +27,7 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 
 	private boolean _is_setup_done = false;
 	private GraphicsDevice dev;
+	protected boolean showFps = false;
 	
 	private static final String TITLE = "DigiOH - Augmented Reality";
 	private WindowAdapter exitWindowAdapter = new WindowAdapter() {
@@ -164,6 +164,9 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 			GL gl = drawable.getGL();
 			setup(gl);
 			Animator animator = new Animator(drawable);
+			if (showFps) {
+				animator.setUpdateFPSFrames(3, null);
+			}
 			animator.start();
 			_is_setup_done = true;
 
@@ -181,7 +184,6 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 		gl.glViewport(0, 0, width, height);
 				
 		cameraDimension.setSize(width, height);
-
 		return;
 	}
 
@@ -190,6 +192,9 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 		try {
 			if (_is_setup_done) {
 				draw(drawable.getGL());
+				if (showFps) {
+					System.err.println("--> fps: " + drawable.getAnimator().getLastFPS());
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
