@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -19,7 +17,6 @@ import java.util.Date;
 import javax.imageio.ImageIO;
 
 import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.util.jh.JHBlurFilter;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -95,9 +92,6 @@ public class App extends GlSketch {
 	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 	private CaptureDialog captureDialog;
 	
-	private boolean isFilterActive = false;
-	private JHBlurFilter blurFilter = new JHBlurFilter(10, 10, 10);
-
 	public App(int i_width, int i_height, boolean useCamera) {
 		super(i_width, i_height);
 		this.useCamera = useCamera;
@@ -193,18 +187,6 @@ public class App extends GlSketch {
 		}
 		
 		captureDialog = new CaptureDialog(frame);
-		captureDialog.addWindowFocusListener(new WindowFocusListener() {
-			
-			@Override
-			public void windowLostFocus(WindowEvent e) {
-				isFilterActive = false;				
-			}
-			
-			@Override
-			public void windowGainedFocus(WindowEvent e) {
-				isFilterActive = true;
-			}
-		});
 	}
 
 	private void updateRotation() {
@@ -221,14 +203,7 @@ public class App extends GlSketch {
 	
 	private void updateImageRaster() {
 		if (useCamera) {
-			if (isFilterActive) {
-				
-				BufferedImage buffImg = camera.getImage();
-				imgRaster = new NyARBufferedImageRaster(blurFilter.filter(camera.getImage(), buffImg));
-				
-			} else {
-				imgRaster = new NyARBufferedImageRaster(camera.getImage());
-			}
+			imgRaster = new NyARBufferedImageRaster(camera.getImage());
 		} else {
 			imgRaster = testImg;
 		}
