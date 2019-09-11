@@ -42,6 +42,8 @@ public class CaptureDialog extends Dialog {
 				new Thread(new SendEmailAttachment(addressField.getText(), 
 								messageText.getText(), attachment)).start();
 
+				this.dispose();
+				
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}		
@@ -68,7 +70,7 @@ public class CaptureDialog extends Dialog {
 		pack();
 		setLayout(new FlowLayout(10, 10, 5));		
 		setSize(width, heigh);		
-		setVisible(false);
+		setVisible(true);
 	}
 	
 	public void sendEmail(Dimension dimension, String attachment) {
@@ -81,7 +83,7 @@ public class CaptureDialog extends Dialog {
 			setLocation((dimension.width / 5) * 2, (dimension.height / 6) * 2);
 			setVisible(true);
 			toFront();
-			
+						
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

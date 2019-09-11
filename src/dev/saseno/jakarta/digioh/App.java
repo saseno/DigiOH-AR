@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -186,7 +188,21 @@ public class App extends GlSketch {
 			camera.open();
 		}
 		
-		captureDialog = new CaptureDialog(frame);
+//		captureDialog = new CaptureDialog(frame);
+//		captureDialog.addWindowFocusListener(new WindowFocusListener() {
+//			
+//			@Override
+//			public void windowLostFocus(WindowEvent e) {
+//				//frame.setVisible(true);
+//				//frame.toFront();
+//			}
+//			
+//			@Override
+//			public void windowGainedFocus(WindowEvent e) {
+//				//frame.setVisible(true);
+//				//frame.toFront();		
+//			}
+//		});
 	}
 
 	private void updateRotation() {
@@ -367,9 +383,10 @@ public class App extends GlSketch {
 
 	private void uploadPhoto(String fileLocation) {
 		try {
-			if (captureDialog != null) {
-				captureDialog.sendEmail(cameraDimension, fileLocation);
-			}
+			captureDialog = new CaptureDialog(frame);
+			//if (captureDialog != null) {
+			captureDialog.sendEmail(cameraDimension, fileLocation);
+			//}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
