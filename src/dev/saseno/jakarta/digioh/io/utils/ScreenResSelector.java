@@ -178,14 +178,8 @@ public class ScreenResSelector {
 			buttonPanel.add(Box.createHorizontalStrut(10));
 			button = new JButton("Cancel");
 			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					selectedIndex = -1;
-					done = true;
-					synchronized (monitor) {
-						monitor.notify();
-					}
-					setVisible(false);
-					dispose();
+				public void actionPerformed(ActionEvent e) {					
+					System.exit(0);
 				}
 			});
 			

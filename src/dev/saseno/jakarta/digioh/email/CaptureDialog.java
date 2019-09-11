@@ -23,8 +23,7 @@ public class CaptureDialog extends Dialog {
 	public CaptureDialog(Frame frame) {
 		super(frame);
 		
-		//setModalityType(ModalityType.TOOLKIT_MODAL);
-		
+		//setModalityType(ModalityType.TOOLKIT_MODAL);		
 		setTitle("Email Sender");		
 		setBackground(new Color(234, 234, 234));
 
