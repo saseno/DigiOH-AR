@@ -236,6 +236,69 @@ public class NyARGLDrawUtil {
 		gl.glEnd();
 	}
 
+	public static void drawBackGround(GL i_gl, TextRenderer textInfo, String string, double i_zoom, double width, double height) throws NyARRuntimeException {
+		GL2 gl = i_gl.getGL2();
+		
+		IntBuffer texEnvModeSave = IntBuffer.allocate(1);
+		boolean lightingSave;
+		boolean depthTestSave;
+				
+		// Prepare an orthographic projection, set camera position for 2D drawing, and save GL state.
+		// Save GL texture environment mode.
+		gl.glGetTexEnviv(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, texEnvModeSave); 
+		if (texEnvModeSave.array()[0] != GL.GL_REPLACE) {
+			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+		}
+		
+		// Save enabled state of lighting.
+		lightingSave = gl.glIsEnabled(GL2.GL_LIGHTING); 
+		if (lightingSave == true) {
+			i_gl.glDisable(GL2.GL_LIGHTING);
+		}
+		
+		// Save enabled state of depth test.
+		depthTestSave = i_gl.glIsEnabled(GL.GL_DEPTH_TEST); 
+		if (depthTestSave == true) {
+			i_gl.glDisable(GL.GL_DEPTH_TEST);
+		}
+		
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+		
+		gl.glOrtho(-100.0, width, 0.0, height, 0, 1);
+		
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+
+		gl.glDisable(GL2.GL_TEXTURE_2D);
+		textInfo.beginRendering((int) width, (int) height);
+		textInfo.setColor(1.0f, 0.2f, 0.2f, 1f);
+		textInfo.draw(string, 1, 1);
+		textInfo.endRendering();	
+		
+		//arglDispImageStateful(i_gl, rsize, i_raster, i_zoom, mirror, width, height);
+		
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glPopMatrix();
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glPopMatrix();
+		if (depthTestSave) {
+			// Restore enabled state of depth test.
+			i_gl.glEnable(GL.GL_DEPTH_TEST); 
+		}
+		if (lightingSave) {
+			// Restore enabled state of lighting.
+			gl.glEnable(GL2.GL_LIGHTING); 
+		}
+		if (texEnvModeSave.get(0) != GL.GL_REPLACE) {
+			// Restore GL texture environment mode.
+			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, texEnvModeSave.get(0)); 
+		}
+		gl.glEnd();
+	}
+
 	public static void drawRaster(GL i_gl, INyARRgbRaster i_raster) throws NyARRuntimeException {
 		GL2 gl = i_gl.getGL2();
 

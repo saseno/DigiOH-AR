@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -84,6 +82,8 @@ public class App extends GlSketch {
 	private String tempTestImg = "/320x240ABGR.png";
 
 	private TextRenderer textRenderer = null;
+	private TextRenderer textInfo = null;
+	
 	private int startCaptureScreen = -1;
 	private long startCaptureScreenTime = 0;
 
@@ -188,7 +188,8 @@ public class App extends GlSketch {
 		id_twitter 	= nyar.addARMarker(getClass().getResourceAsStream(patt_twitter), 16, 25, 80);
 
 		textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, cameraDimension.height));
-
+		textInfo = new TextRenderer(new Font("SansSerif", Font.BOLD, 22));
+		
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		initModel();
 
@@ -315,6 +316,8 @@ public class App extends GlSketch {
 				}
 			}
 
+			//render.drawStringInfo(gl, textInfo, "DigiOH - 2019", cameraDimension.getWidth(), cameraDimension.getHeight());
+			
 			Thread.sleep(1);
 
 		} catch (Exception e) {

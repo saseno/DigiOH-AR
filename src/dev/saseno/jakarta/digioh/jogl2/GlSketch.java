@@ -25,9 +25,9 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 	protected GLCanvas canvas;
 	protected Dimension cameraDimension = new Dimension(320, 240);
 
+	protected boolean showFps = false;
 	private boolean _is_setup_done = false;
 	private GraphicsDevice dev;
-	protected boolean showFps = false;
 	
 	private static final String TITLE = "DigiOH - Augmented Reality";
 	private WindowAdapter exitWindowAdapter = new WindowAdapter() {

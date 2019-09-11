@@ -3,6 +3,7 @@ package dev.saseno.jakarta.digioh.io.utils;
 import java.awt.image.BufferedImage;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.awt.TextRenderer;
 
 import dev.saseno.jakarta.digioh.wavefront.GLModel;
 import jp.nyatla.nyartoolkit.core.NyARRuntimeException;
@@ -62,6 +63,10 @@ public class NyARGlRender implements INyARSingleCameraSystemObserver {
 	public final void drawBackground(GL i_gl, INyARRgbRaster i_bg_image, boolean mirror, double width, double height) throws NyARRuntimeException {
 		i_gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT); // Clear the buffers for new frame.
 		NyARGLDrawUtil.drawBackGround(i_gl, i_bg_image, 1.0, mirror, width, height);
+	}
+
+	public final void drawStringInfo(GL i_gl, TextRenderer textInfo, String string, double width, double height) throws NyARRuntimeException {
+		NyARGLDrawUtil.drawBackGround(i_gl, textInfo, string, 1.0, width, height);
 	}
 
 	public final void drawBackground(GL i_gl, INyARGrayscaleRaster i_bg_image, boolean mirror, int width, int height) throws NyARRuntimeException {
