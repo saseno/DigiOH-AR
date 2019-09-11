@@ -134,6 +134,12 @@ public class SendEmailAttachment implements Runnable {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+
+			System.err.println("----------------------");
+			System.err.println("Email Sender End");
+			System.err.println("----------------------");
+			
 		}
 	}
 

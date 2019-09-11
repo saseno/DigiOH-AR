@@ -245,11 +245,11 @@ public class App extends GlSketch {
 
 			if (nyar.isExist(id)) {
 				nyar.loadTransformMatrix(gl, id);
-				// render.colorCube(gl, 50, 0, 0, 20, rquad);
+				//render.colorCube(gl, 50, 0, 0, 20, rquad);
 				//render.renderModel(gl, 60, 0, 0, rquad, modelLove);
 				render.renderModel(gl, 60, 0, 0, rquad, modelClient);
 
-				// render.drawText(gl, 0, 0, 20, rquad, "test 123");
+				//render.drawText(gl, 0, 0, 20, rquad, "test 123");
 				//render.renderModel(gl, 0, 0, 0, rquad, modelPatung);
 			}
 
