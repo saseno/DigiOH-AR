@@ -107,7 +107,7 @@ public class App extends GlSketch {
 				img = ImageIO.read(getClass().getResourceAsStream(tempTestImg));
 				testImg = new NyARBufferedImageRaster(img);
 
-				cameraDimension.setSize(testImg.getWidth(), testImg.getHeight());
+				monitorDimension.setSize(testImg.getWidth(), testImg.getHeight());
 
 			}
 
@@ -161,7 +161,7 @@ public class App extends GlSketch {
 			}
 
 			System.err.println("------------------");
-			System.err.println("Use Dimension: " + cameraDimension);
+			System.err.println("Camera Dimension: " + cameraDimension);
 			System.err.println("------------------");
 			camera.setViewSize(cameraDimension);
 
@@ -173,8 +173,8 @@ public class App extends GlSketch {
 
 	public void setup(GL gl) throws Exception {
 
-		NyARMarkerSystemConfig config = new NyARMarkerSystemConfig(cameraDimension.width, cameraDimension.height);
-		size(cameraDimension.width, cameraDimension.height);
+		NyARMarkerSystemConfig config = new NyARMarkerSystemConfig(monitorDimension.width, monitorDimension.height);
+		//size(cameraDimension.width, cameraDimension.height);
 
 		nyar = new NyARGlMarkerSystem(config);
 		render = new NyARGlRender(nyar);
@@ -187,14 +187,14 @@ public class App extends GlSketch {
 		id_insta 	= nyar.addARMarker(getClass().getResourceAsStream(patt_insta), 16, 25, 80);
 		id_twitter 	= nyar.addARMarker(getClass().getResourceAsStream(patt_twitter), 16, 25, 80);
 
-		textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, cameraDimension.height));
+		textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, monitorDimension.height));
 		textInfo = new TextRenderer(new Font("SansSerif", Font.BOLD, 22));
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		initModel();
 
-		snapShotBuffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
-		screenshot = new BufferedImage(cameraDimension.width, cameraDimension.height, BufferedImage.TYPE_INT_RGB);
+		snapShotBuffer = GLBuffers.newDirectByteBuffer(monitorDimension.width * monitorDimension.height * 4);
+		screenshot = new BufferedImage(monitorDimension.width, monitorDimension.height, BufferedImage.TYPE_INT_RGB);
 
 		if (useCamera) {
 			camera.open();
@@ -250,7 +250,7 @@ public class App extends GlSketch {
 				return;
 			}
 
-			render.drawBackground(gl, sensor.getSourceImage(), isMirrored(), cameraDimension.getWidth(), cameraDimension.getHeight());			
+			render.drawBackground(gl, sensor.getSourceImage(), isMirrored(), monitorDimension.getWidth(), monitorDimension.getHeight());			
 			render.loadARProjectionMatrix(gl, isMirrored());
 			
 			nyar.update(sensor);
@@ -302,10 +302,10 @@ public class App extends GlSketch {
 				} else if (startCaptureScreen > 0) {
 
 			        gl.getGL2().glDisable(GL2.GL_TEXTURE_2D);
-					textRenderer.beginRendering(cameraDimension.width, cameraDimension.height);
+					textRenderer.beginRendering(monitorDimension.width, monitorDimension.height);
 					textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);					
-					textRenderer.draw("" + startCaptureScreen, (cameraDimension.width / 10) * 3,
-							(cameraDimension.height / 7) * 1);
+					textRenderer.draw("" + startCaptureScreen, (monitorDimension.width / 10) * 3,
+							(monitorDimension.height / 7) * 1);
 					textRenderer.endRendering();					
 					
 				}
@@ -331,14 +331,14 @@ public class App extends GlSketch {
 		try {		
 			
 			graphics = screenshot.getGraphics();			
-			snapShotBuffer = GLBuffers.newDirectByteBuffer(cameraDimension.width * cameraDimension.height * 4);
+			snapShotBuffer = GLBuffers.newDirectByteBuffer(monitorDimension.width * monitorDimension.height * 4);
 			
 			gl.getGL2().glReadBuffer(GL2.GL_FRONT_AND_BACK);
-			gl.getGL2().glReadPixels(0, 0, cameraDimension.width, cameraDimension.height, GL2.GL_RGBA,
+			gl.getGL2().glReadPixels(0, 0, monitorDimension.width, monitorDimension.height, GL2.GL_RGBA,
 					GL2.GL_UNSIGNED_BYTE, snapShotBuffer);
 
-			for (int h = 0; h < cameraDimension.height; h++) {
-				for (int w = 0; w < cameraDimension.width; w++) {
+			for (int h = 0; h < monitorDimension.height; h++) {
+				for (int w = 0; w < monitorDimension.width; w++) {
 
 					graphics.setColor(new Color(
 							(snapShotBuffer.get() & 0xff), 
@@ -399,7 +399,7 @@ public class App extends GlSketch {
 		try {
 			captureDialog = new CaptureDialog(frame);
 			//if (captureDialog != null) {
-			captureDialog.sendEmail(cameraDimension, fileLocation);
+			captureDialog.sendEmail(monitorDimension, fileLocation);
 			//}
 		} catch (Exception e) {
 			e.printStackTrace();
