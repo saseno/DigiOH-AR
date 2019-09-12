@@ -10,10 +10,7 @@ import java.awt.event.WindowFocusListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,20 +19,11 @@ import java.util.Date;
 import javax.imageio.ImageIO;
 
 import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.util.jh.JHBlurFilter;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.awt.TextRenderer;
-import com.restfb.BinaryAttachment;
-import com.restfb.DefaultFacebookClient;
-import com.restfb.FacebookClient;
-import com.restfb.Version;
-import com.restfb.types.FacebookType;
-import com.restfb.types.InstagramUser;
-import com.restfb.types.User;
-
 import dev.saseno.jakarta.digioh.email.CaptureDialog;
 import dev.saseno.jakarta.digioh.io.utils.NyARGlMarkerSystem;
 import dev.saseno.jakarta.digioh.io.utils.NyARGlRender;
@@ -109,7 +97,6 @@ public class App extends GlSketch {
 	private CaptureDialog captureDialog;
 	
 	private boolean isFilterActive = false;
-	private JHBlurFilter blurFilter = new JHBlurFilter(10, 10, 10);
 	
 	public App(int i_width, int i_height, boolean useCamera) {
 		super(i_width, i_height);
@@ -223,7 +210,11 @@ public class App extends GlSketch {
 			
 			@Override
 			public void windowLostFocus(WindowEvent e) {
-				isFilterActive = false;
+				try {
+					isFilterActive = false;
+					captureDialog.setVisible(false);
+				} catch (Exception ex) {
+				}
 			}
 			
 			@Override
@@ -247,19 +238,14 @@ public class App extends GlSketch {
 	
 	private void updateImageRaster() {
 		if (useCamera) {
-			if (isFilterActive) {
-				BufferedImage bi = camera.getImage();
-				imgRaster = new NyARBufferedImageRaster(blurFilter.filter(camera.getImage(), bi));
-			} else {
-				imgRaster = new NyARBufferedImageRaster(camera.getImage());
-			}
+			imgRaster = new NyARBufferedImageRaster(camera.getImage());
 		} else {
 			imgRaster = testImg;
 		}
 	}
 
 	public void draw(GL gl) throws Exception {
-		//synchronized (camera) {
+		synchronized (camera) {
 		try {
 
 			updateRotation();
@@ -272,92 +258,87 @@ public class App extends GlSketch {
 			}
 
 			render.drawBackground(gl, sensor.getSourceImage(), isMirrored(), monitorDimension.getWidth(), monitorDimension.getHeight());			
-			render.loadARProjectionMatrix(gl, isMirrored());
 			
-			try {
-				nyar.update(sensor);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			if (isFilterActive) {
 
-			renderModelIfExist(gl, id, modelClient, 60, 0, 0);
-			renderModelIfExist(gl, id_cloud, modelEarth, 0, 0, 0);
-			renderModelIfExist(gl, id_digiOH, modelLove, 60, 0, 0);
-			renderModelIfExist(gl, id_insta, modelMario, 0, 0, 0);
-			renderModelIfExist(gl, id_twitter, modelPatung, 0, -230, 0);
-			renderModelIfExist(gl, id_samsung, modelClient, 0, 0, 0);
-			
-			/*
-			if (nyar.isExist(id)) {
-				nyar.loadTransformMatrix(gl, id);
-				//render.colorCube(gl, 50, 0, 0, 20, rquad);
-				//render.renderModel(gl, 60, 0, 0, rquad, modelLove);
-				render.renderModel(gl, 60, 0, 0, rquad, modelClient);
+				gl.glEnable(GL2.GL_BLEND);
+				gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+				
+		        gl.glEnable(GL2.GL_TEXTURE_2D);
+		        gl.glEnable(GL2.GL_LIGHT0);
+		        gl.glDisable(GL2.GL_LIGHTING); 
+				
+				gl.getGL2().glMatrixMode(GL2.GL_PROJECTION);
+				gl.getGL2().glPushMatrix();
+				gl.getGL2().glLoadIdentity();
+				
+				gl.getGL2().glOrtho(-100.0, monitorDimension.getWidth(), 0.0, monitorDimension.getHeight(), 0, 1);
+				
+				gl.getGL2().glMatrixMode(GL2.GL_MODELVIEW);
+				gl.getGL2().glPushMatrix();
+				gl.getGL2().glLoadIdentity();
+				
+				gl.getGL2().glBegin(GL2.GL_POLYGON);
 
-				//render.drawText(gl, 0, 0, 20, rquad, "test 123");
-				//render.renderModel(gl, 0, 0, 0, rquad, modelPatung);
-			}
+				gl.getGL2().glColor4f(0.3f, 0.3f, 0.3f, 0.4f);
+				gl.getGL2().glVertex3d(-100, -100, 0);
+				gl.getGL2().glVertex3d(monitorDimension.getWidth(), -100, 0);
+				gl.getGL2().glVertex3d(monitorDimension.getWidth(), monitorDimension.getHeight(), 0);
+				gl.getGL2().glVertex3d(-100, monitorDimension.getHeight(), 0);				
+				
+				gl.getGL2().glEnd();
+								 
+			} else {
+				
+				render.loadARProjectionMatrix(gl, isMirrored());
 
-			if (nyar.isExist(id_cloud)) {
-				nyar.loadTransformMatrix(gl, id_cloud);
-				render.renderModel(gl, 0, 0, 0, rquad, modelEarth);
-			}
-
-			if (nyar.isExist(id_digiOH)) {
-				nyar.loadTransformMatrix(gl, id_digiOH);
-				render.renderModel(gl, 60, 0, 0, rquad, modelLove);
-			}
-
-			if (nyar.isExist(id_insta)) {
-				nyar.loadTransformMatrix(gl, id_insta);
-				//render.renderModel(gl, 0, 0, 0, rquad, modelMars);
-				//render.renderModel(gl, 0, 0, 0, rquad, modelPlane);
-				render.renderModel(gl, 0, 0, 0, rquad, modelMario);
-			}
-
-			if (nyar.isExist(id_twitter)) {
-				nyar.loadTransformMatrix(gl, id_twitter);
-				render.renderModel(gl, 0, -230, 0, rquad, modelPatung);
-			}
-
-			if (nyar.isExist(id_samsung)) {
-				nyar.loadTransformMatrix(gl, id_samsung);
-		        render.renderModel(gl, 0, 0, 0, rquad, modelClient);
-			}
-			*/
-						
-			if ((startCaptureScreen >= 0)) {
-
-				if (startCaptureScreen == 0) {
-					//System.err.println("--> captured...");
-					startCaptureScreen = -1;
-					saveScreenShot(gl);
-
-				} else if (startCaptureScreen > 0) {
-
-			        gl.getGL2().glDisable(GL2.GL_TEXTURE_2D);
-					textRenderer.beginRendering(monitorDimension.width, monitorDimension.height);
-					textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);					
-					textRenderer.draw("" + startCaptureScreen, (monitorDimension.width / 10) * 3,
-							(monitorDimension.height / 7) * 1);
-					textRenderer.endRendering();					
-					
+				try {
+					nyar.update(sensor);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 
-				if ((System.currentTimeMillis() - startCaptureScreenTime >= 1200)) {
-					startCaptureScreen--;
-					startCaptureScreenTime = System.currentTimeMillis();
-				}
-			}
+				renderModelIfExist(gl, id, modelClient, 60, 0, 0);
+				renderModelIfExist(gl, id_cloud, modelEarth, 0, 0, 0);
+				renderModelIfExist(gl, id_digiOH, modelLove, 60, 0, 0);
+				renderModelIfExist(gl, id_insta, modelMario, 0, 0, 0);
+				renderModelIfExist(gl, id_twitter, modelPatung, 0, -230, 0);
+				renderModelIfExist(gl, id_samsung, modelClient, 0, 0, 0);
 
-			//render.drawStringInfo(gl, textInfo, "DigiOH - 2019", cameraDimension.getWidth(), cameraDimension.getHeight());
+				if ((startCaptureScreen >= 0)) {
+
+					if (startCaptureScreen == 0) {
+						// System.err.println("--> captured...");
+						startCaptureScreen = -1;
+						saveScreenShot(gl);
+
+					} else if (startCaptureScreen > 0) {
+
+						gl.getGL2().glDisable(GL2.GL_TEXTURE_2D);
+						textRenderer.beginRendering(monitorDimension.width, monitorDimension.height);
+						textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);
+						textRenderer.draw("" + startCaptureScreen, (monitorDimension.width / 10) * 3,
+								(monitorDimension.height / 7) * 1);
+						textRenderer.endRendering();
+
+					}
+
+					if ((System.currentTimeMillis() - startCaptureScreenTime >= 1200)) {
+						startCaptureScreen--;
+						startCaptureScreenTime = System.currentTimeMillis();
+					}
+				}
+
+				// render.drawStringInfo(gl, textInfo, "DigiOH - 2019",
+				// cameraDimension.getWidth(), cameraDimension.getHeight());
+			}
 			
 			Thread.sleep(1);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//}
+		}
 	}
 	
 	private void renderModelIfExist(GL gl, int markerId, GLModel model, double i_x, double i_y, double i_z) {

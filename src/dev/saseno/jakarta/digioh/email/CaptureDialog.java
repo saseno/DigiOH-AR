@@ -36,11 +36,14 @@ public class CaptureDialog extends Dialog {
 		
 		Button sendButton = new Button("Kirim Email");
 		sendButton.addActionListener(e -> {
-			try {						
+			try {
 
-				this.setVisible(false);						
+				this.setVisible(false);
+				
 				new Thread(new SendEmailAttachment(addressField.getText(), 
 								messageText.getText(), attachment)).start();
+
+				//new Thread(new PostInFacebook(attachment)).start();
 
 				//this.dispose();
 				

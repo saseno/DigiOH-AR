@@ -12,19 +12,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import com.restfb.BinaryAttachment;
-import com.restfb.DefaultFacebookClient;
-import com.restfb.FacebookClient;
-import com.restfb.Version;
-import com.restfb.types.FacebookType;
-import com.restfb.types.InstagramUser;
-import com.restfb.types.User;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
@@ -41,74 +28,18 @@ public class SendEmailAttachment implements Runnable {
 	private static String EMAIL_FOOTER = "\n\n------\nDigi Selfie - 2019"; //additional footer...
 
 	private static final String SMTP_SERVER = "smtp.gmail.com";
-	private Properties props = null;
-	private Session session = null;	
 	
 	private String[] toAddress = null;
 	private String message = null;
-	private String photoPath = null;
-	
+	private String photoPath = null;	
 	
 	public SendEmailAttachment(String toAddress, String message, String photoPath) {
 		try {
-
-			props = System.getProperties();
-			props.put("mail.debug", "true");
-			props.put("mail.smtp.user", USERNAME);
-			props.put("mail.smtp.password", PASSWORD);
-			props.put("mail.smtp.host", SMTP_SERVER);
-
-			props.put("mail.transport.protocol", "smtps");
-			props.put("mail.smtp.port", "587");
-			props.put("mail.smtp.auth", "true");
-			props.put("mail.smtp.starttls.enable", "true"); // TLS
-			props.put("mail.smtp.ssl.trust", SMTP_SERVER);	        		    	        
-	        
-			session = Session.getInstance(props, new javax.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(USERNAME, PASSWORD);
-                }
-            });
-		
-			session.setDebug(true);
 			
 			this.toAddress 	= toAddress.split(",");
 			this.message 	= message;
 			this.photoPath 	= photoPath;
-			
-			//postFacebook();
-						
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void postFacebook() {
-		try {
-
-			System.err.println("----------------------");
-			System.err.println("post facebook start");
-			System.err.println("----------------------");
-			
-			//String fileName = null;
-			//byte[] data = null;
-			
-			
-			File initialFile = new File(photoPath);		    
-		    byte[] bFile = Files.readAllBytes(Paths.get(photoPath));
-			
-			FacebookClient facebookClient = new DefaultFacebookClient("accessToken", Version.LATEST);
-			User user = facebookClient.fetchObject("me", User.class);
-			
-			System.out.println("User name: " + user.getName());
-
-			FacebookType photo = facebookClient.publish("facebook_page_id/photos", FacebookType.class,
-					BinaryAttachment.with(initialFile.getName(), bFile));
-
-			System.err.println("----------------------");
-			System.err.println("post facebook OK");
-			System.err.println("----------------------");
-			
+									
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -134,6 +65,26 @@ public class SendEmailAttachment implements Runnable {
 	public void sendEmail() {
 
 		try {
+			
+			Properties props = System.getProperties();
+			props.put("mail.debug", "true");
+			props.put("mail.smtp.user", USERNAME);
+			props.put("mail.smtp.password", PASSWORD);
+			props.put("mail.smtp.host", SMTP_SERVER);
+
+			props.put("mail.transport.protocol", "smtps");
+			props.put("mail.smtp.port", "587");
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.starttls.enable", "true"); // TLS
+			props.put("mail.smtp.ssl.trust", SMTP_SERVER);	        		    	        
+	        
+			Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(USERNAME, PASSWORD);
+                }
+            });
+		
+			session.setDebug(true);
 
 			System.err.println("----------------------");
 			System.err.println("Email Sender Start");
