@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -17,6 +19,7 @@ import java.util.Date;
 import javax.imageio.ImageIO;
 
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.util.jh.JHBlurFilter;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -91,8 +94,11 @@ public class App extends GlSketch {
 	private BufferedImage screenshot = null;
 	private Graphics graphics = null;
 
+	private Dimension cameraDimension = new Dimension(320, 240);
 	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 	private CaptureDialog captureDialog;
+	
+	private JHBlurFilter blurFilter = new JHBlurFilter(10, 10, 10);
 	
 	public App(int i_width, int i_height, boolean useCamera) {
 		super(i_width, i_height);
@@ -172,13 +178,12 @@ public class App extends GlSketch {
 	}
 
 	public void setup(GL gl) throws Exception {
-
+		
 		NyARMarkerSystemConfig config = new NyARMarkerSystemConfig(monitorDimension.width, monitorDimension.height);
-		//size(cameraDimension.width, cameraDimension.height);
-
-		nyar = new NyARGlMarkerSystem(config);
-		render = new NyARGlRender(nyar);
-		sensor = new NyARSensor(config.getScreenSize());
+		
+		nyar 	= new NyARGlMarkerSystem(config);
+		render 	= new NyARGlRender(nyar);
+		sensor 	= new NyARSensor(config.getScreenSize());
 
 		id = nyar.addARMarker(getClass().getResourceAsStream(ARCODE_FILE), 16, 25, 80);
 		id_samsung 	= nyar.addARMarker(getClass().getResourceAsStream(patt_samsung), 16, 25, 80);
@@ -200,21 +205,21 @@ public class App extends GlSketch {
 			camera.open();
 		}
 		
-//		captureDialog = new CaptureDialog(frame);
-//		captureDialog.addWindowFocusListener(new WindowFocusListener() {
-//			
-//			@Override
-//			public void windowLostFocus(WindowEvent e) {
-//				//frame.setVisible(true);
-//				//frame.toFront();
-//			}
-//			
-//			@Override
-//			public void windowGainedFocus(WindowEvent e) {
-//				//frame.setVisible(true);
-//				//frame.toFront();		
-//			}
-//		});
+		captureDialog = new CaptureDialog(frame);
+		captureDialog.addWindowFocusListener(new WindowFocusListener() {
+			
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				//frame.setVisible(true);
+				//frame.toFront();
+			}
+			
+			@Override
+			public void windowGainedFocus(WindowEvent e) {
+				//frame.setVisible(true);
+				//frame.toFront();		
+			}
+		});
 	}
 
 	private void updateRotation() {
@@ -238,7 +243,7 @@ public class App extends GlSketch {
 	}
 
 	public void draw(GL gl) throws Exception {
-		synchronized (camera) {
+		//synchronized (camera) {
 		try {
 
 			updateRotation();
@@ -253,7 +258,11 @@ public class App extends GlSketch {
 			render.drawBackground(gl, sensor.getSourceImage(), isMirrored(), monitorDimension.getWidth(), monitorDimension.getHeight());			
 			render.loadARProjectionMatrix(gl, isMirrored());
 			
-			nyar.update(sensor);
+			try {
+				nyar.update(sensor);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 			if (nyar.isExist(id)) {
 				nyar.loadTransformMatrix(gl, id);
@@ -323,7 +332,7 @@ public class App extends GlSketch {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		}
+		//}
 	}
 	
 	private void saveScreenShot(GL gl) {
@@ -397,10 +406,10 @@ public class App extends GlSketch {
 
 	private void uploadPhoto(String fileLocation) {
 		try {
-			captureDialog = new CaptureDialog(frame);
-			//if (captureDialog != null) {
-			captureDialog.sendEmail(monitorDimension, fileLocation);
-			//}
+			//captureDialog = new CaptureDialog(frame);
+			if (captureDialog != null) {
+				captureDialog.sendEmail(monitorDimension, fileLocation);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

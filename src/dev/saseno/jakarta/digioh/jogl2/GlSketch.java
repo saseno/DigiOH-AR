@@ -25,9 +25,7 @@ import dev.saseno.jakarta.digioh.io.utils.ScreenResSelector;
 public abstract class GlSketch implements GLEventListener, KeyListener, MouseListener {
 
 	protected Frame frame;
-	protected GLCanvas canvas;
-	
-	protected Dimension cameraDimension = new Dimension(320, 240);
+	protected GLCanvas canvas;	
 	protected Dimension monitorDimension = new Dimension(320, 240);
 
 	protected GLUT glut;
@@ -95,7 +93,7 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 		}
 		
 		monitorDimension = Toolkit.getDefaultToolkit().getScreenSize();
-
+		
 		frame = new Frame(TITLE);
 		frame.setExtendedState(Frame.MAXIMIZED_BOTH); 
 		frame.setUndecorated(true);
