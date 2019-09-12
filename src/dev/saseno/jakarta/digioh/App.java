@@ -10,7 +10,10 @@ import java.awt.event.WindowFocusListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -25,6 +28,13 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.awt.TextRenderer;
+import com.restfb.BinaryAttachment;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
+import com.restfb.Version;
+import com.restfb.types.FacebookType;
+import com.restfb.types.InstagramUser;
+import com.restfb.types.User;
 
 import dev.saseno.jakarta.digioh.email.CaptureDialog;
 import dev.saseno.jakarta.digioh.io.utils.NyARGlMarkerSystem;
@@ -121,8 +131,6 @@ public class App extends GlSketch {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		initInstagram();
 	}
 
 	private void initModel() {
@@ -410,28 +418,6 @@ public class App extends GlSketch {
 		}
 	}
 
-	private void initInstagram() {
-		try {
-
-//			String fileName = null;
-//			byte[] data = null;
-//			String accessToken = "";
-//						
-//			FacebookClient facebookClient = new DefaultFacebookClient(accessToken, Version.LATEST);
-//			User user = facebookClient.fetchObject("me", User.class);
-//			System.out.println("User name: " + user.getName());
-//
-//			URL url = new URL("img_url");
-//			InputStream stream = new BufferedInputStream(url.openConnection().getInputStream());
-//
-//			FacebookType photo = facebookClient.publish("facebook_page_id/photos", FacebookType.class,
-//					BinaryAttachment.with(fileName, data));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	private void uploadPhoto(String fileLocation) {
 		try {
 			//captureDialog = new CaptureDialog(frame);
@@ -444,7 +430,11 @@ public class App extends GlSketch {
 	}
 
 	@Override
-	public void keyTyped(java.awt.event.KeyEvent e) {
+	public void mouseClicked(MouseEvent e) {		
+		if (e.getClickCount() >= 2 && startCaptureScreen < 0) {
+			startCaptureScreen = 5;
+			startCaptureScreenTime = System.currentTimeMillis();
+		}
 	}
 
 	@Override
@@ -455,16 +445,11 @@ public class App extends GlSketch {
 	}
 
 	@Override
-	public void keyReleased(java.awt.event.KeyEvent e) {
+	public void keyTyped(java.awt.event.KeyEvent e) {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		
-		if (e.getClickCount() >= 2 && startCaptureScreen < 0) {
-			startCaptureScreen = 5;
-			startCaptureScreenTime = System.currentTimeMillis();
-		}
+	public void keyReleased(java.awt.event.KeyEvent e) {
 	}
 
 	@Override

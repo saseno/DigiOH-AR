@@ -12,6 +12,19 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.restfb.BinaryAttachment;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
+import com.restfb.Version;
+import com.restfb.types.FacebookType;
+import com.restfb.types.InstagramUser;
+import com.restfb.types.User;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
@@ -34,6 +47,7 @@ public class SendEmailAttachment implements Runnable {
 	private String[] toAddress = null;
 	private String message = null;
 	private String photoPath = null;
+	
 	
 	public SendEmailAttachment(String toAddress, String message, String photoPath) {
 		try {
@@ -61,7 +75,40 @@ public class SendEmailAttachment implements Runnable {
 			this.toAddress 	= toAddress.split(",");
 			this.message 	= message;
 			this.photoPath 	= photoPath;
+			
+			//postFacebook();
 						
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void postFacebook() {
+		try {
+
+			System.err.println("----------------------");
+			System.err.println("post facebook start");
+			System.err.println("----------------------");
+			
+			//String fileName = null;
+			//byte[] data = null;
+			
+			
+			File initialFile = new File(photoPath);		    
+		    byte[] bFile = Files.readAllBytes(Paths.get(photoPath));
+			
+			FacebookClient facebookClient = new DefaultFacebookClient("accessToken", Version.LATEST);
+			User user = facebookClient.fetchObject("me", User.class);
+			
+			System.out.println("User name: " + user.getName());
+
+			FacebookType photo = facebookClient.publish("facebook_page_id/photos", FacebookType.class,
+					BinaryAttachment.with(initialFile.getName(), bFile));
+
+			System.err.println("----------------------");
+			System.err.println("post facebook OK");
+			System.err.println("----------------------");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
