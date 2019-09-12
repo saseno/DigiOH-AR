@@ -98,6 +98,7 @@ public class App extends GlSketch {
 	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 	private CaptureDialog captureDialog;
 	
+	private boolean isFilterActive = false;
 	private JHBlurFilter blurFilter = new JHBlurFilter(10, 10, 10);
 	
 	public App(int i_width, int i_height, boolean useCamera) {
@@ -214,14 +215,12 @@ public class App extends GlSketch {
 			
 			@Override
 			public void windowLostFocus(WindowEvent e) {
-				//frame.setVisible(true);
-				//frame.toFront();
+				isFilterActive = false;
 			}
 			
 			@Override
 			public void windowGainedFocus(WindowEvent e) {
-				//frame.setVisible(true);
-				//frame.toFront();		
+				isFilterActive = true;
 			}
 		});
 	}
@@ -240,7 +239,12 @@ public class App extends GlSketch {
 	
 	private void updateImageRaster() {
 		if (useCamera) {
-			imgRaster = new NyARBufferedImageRaster(camera.getImage());
+			if (isFilterActive) {
+				BufferedImage bi = camera.getImage();
+				imgRaster = new NyARBufferedImageRaster(blurFilter.filter(camera.getImage(), bi));
+			} else {
+				imgRaster = new NyARBufferedImageRaster(camera.getImage());
+			}
 		} else {
 			imgRaster = testImg;
 		}
