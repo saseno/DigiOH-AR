@@ -38,6 +38,7 @@ import dev.saseno.jakarta.digioh.obj.Mars;
 import dev.saseno.jakarta.digioh.obj.Moon;
 import dev.saseno.jakarta.digioh.obj.Patung;
 import dev.saseno.jakarta.digioh.obj.Plane;
+import dev.saseno.jakarta.digioh.wavefront.GLModel;
 import jp.nyatla.nyartoolkit.j2se.NyARBufferedImageRaster;
 import jp.nyatla.nyartoolkit.markersystem.NyARMarkerSystemConfig;
 import jp.nyatla.nyartoolkit.markersystem.NyARSensor;
@@ -267,6 +268,14 @@ public class App extends GlSketch {
 				e.printStackTrace();
 			}
 
+			renderModelIfExist(gl, id, modelClient, 60, 0, 0);
+			renderModelIfExist(gl, id_cloud, modelEarth, 0, 0, 0);
+			renderModelIfExist(gl, id_digiOH, modelLove, 60, 0, 0);
+			renderModelIfExist(gl, id_insta, modelMario, 0, 0, 0);
+			renderModelIfExist(gl, id_twitter, modelPatung, 0, -230, 0);
+			renderModelIfExist(gl, id_samsung, modelClient, 0, 0, 0);
+			
+			/*
 			if (nyar.isExist(id)) {
 				nyar.loadTransformMatrix(gl, id);
 				//render.colorCube(gl, 50, 0, 0, 20, rquad);
@@ -303,6 +312,7 @@ public class App extends GlSketch {
 				nyar.loadTransformMatrix(gl, id_samsung);
 		        render.renderModel(gl, 0, 0, 0, rquad, modelClient);
 			}
+			*/
 						
 			if ((startCaptureScreen >= 0)) {
 
@@ -338,6 +348,14 @@ public class App extends GlSketch {
 		//}
 	}
 	
+	private void renderModelIfExist(GL gl, int markerId, GLModel model, double i_x, double i_y, double i_z) {
+
+		if (nyar.isExist(markerId)) {
+			nyar.loadTransformMatrix(gl, markerId);
+			render.renderModel(gl, i_x, i_y, i_z, rquad, model);
+		}
+	}
+	
 	private void saveScreenShot(GL gl) {
 
 		try {		
@@ -371,7 +389,10 @@ public class App extends GlSketch {
 			try {
 				AffineTransform tx = AffineTransform.getScaleInstance(-1, -1);
 				tx.translate(-screenshot.getWidth(null), -screenshot.getHeight(null));
-				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				
+				//AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+				
 				screenshot = op.filter(screenshot, null);
 				
 			} catch (Exception e) {
