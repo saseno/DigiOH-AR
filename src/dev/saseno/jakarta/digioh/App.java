@@ -94,7 +94,6 @@ public class App extends GlSketch {
 	private BufferedImage screenshot = null;
 	private Graphics graphics = null;
 
-	private Dimension cameraDimension = new Dimension(320, 240);
 	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 	private CaptureDialog captureDialog;
 	
@@ -139,6 +138,8 @@ public class App extends GlSketch {
 	private void initCameraDimension() {
 		try {
 
+			//Dimension cameraDimension = new Dimension(320, 240);
+			
 			System.err.println("------------------");
 			System.err.println("Use camera");
 			System.err.println("------------------");
@@ -150,26 +151,27 @@ public class App extends GlSketch {
 
 				for (Dimension dim : webCam.getViewSizes()) {
 					System.err.println("--> cameraDimension: " + dim);
-					if (cameraDimension.height < dim.height && cameraDimension.width < dim.width) {
-						cameraDimension = dim;
+					if (monitorDimension.height < dim.height && monitorDimension.width < dim.width) {
+						monitorDimension = dim;
 					}
 				}
 			}
 
 			camera = Webcam.getDefault();
-			cameraDimension = camera.getViewSize();
+			monitorDimension = camera.getViewSize();
 
 			for (Dimension dim : camera.getViewSizes()) {
 				//System.err.println("--> cameraDimension: " + dim);
-				if (cameraDimension.height < dim.height && cameraDimension.width < dim.width) {
-					cameraDimension = dim;
+				if (monitorDimension.height < dim.height && monitorDimension.width < dim.width) {
+					monitorDimension = dim;
 				}
 			}
 
 			System.err.println("------------------");
-			System.err.println("Camera Dimension: " + cameraDimension);
+			System.err.println("Camera Dimension: " + monitorDimension);
 			System.err.println("------------------");
-			camera.setViewSize(cameraDimension);
+			
+			camera.setViewSize(monitorDimension);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -202,6 +204,7 @@ public class App extends GlSketch {
 		screenshot = new BufferedImage(monitorDimension.width, monitorDimension.height, BufferedImage.TYPE_INT_RGB);
 
 		if (useCamera) {
+			//System.err.println("--> camera open");
 			camera.open();
 		}
 		
