@@ -82,29 +82,33 @@ public class Keyboard {
         /**
          * Check if the special function key is already pressed then simply return
          */
-        switch (keycode) {
-            case VK_SHIFT:
-                if (IS_SHIFT_PRESSED)
-                    return;
-                IS_SHIFT_PRESSED = true;
-                break;
-            case VK_CONTROL:
-                if (IS_CTRL_PRESSED)
-                    return;
-                IS_CTRL_PRESSED = true;
-                break;
-            case VK_ALT:
-                if (IS_ALT_PRESSED)
-                    return;
-                IS_ALT_PRESSED = true;
-                break;
-            case VK_WINDOWS:
-                if(IS_WIN_PRESSED)
-                    return;
-                IS_WIN_PRESSED = true;
-        }
-        
-        robot.keyPress(keycode);
+		try {
+			switch (keycode) {
+			case VK_SHIFT:
+				if (IS_SHIFT_PRESSED)
+					return;
+				IS_SHIFT_PRESSED = true;
+				break;
+			case VK_CONTROL:
+				if (IS_CTRL_PRESSED)
+					return;
+				IS_CTRL_PRESSED = true;
+				break;
+			case VK_ALT:
+				if (IS_ALT_PRESSED)
+					return;
+				IS_ALT_PRESSED = true;
+				break;
+			case VK_WINDOWS:
+				if (IS_WIN_PRESSED)
+					return;
+				IS_WIN_PRESSED = true;
+			}
+
+			robot.keyPress(keycode);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
     
     /**
@@ -118,29 +122,33 @@ public class Keyboard {
         /**
          * Check if the special function key is was pressed or not. If not then simply return
          */
-        switch (keycode) {
-            case VK_SHIFT:
-                if (!IS_SHIFT_PRESSED)
-                    return;
-                IS_SHIFT_PRESSED = false;
-                break;
-            case VK_CONTROL:
-                if (!IS_CTRL_PRESSED)
-                    return;
-                IS_CTRL_PRESSED = false;
-                break;
-            case VK_ALT:
-                if (!IS_ALT_PRESSED)
-                    return;
-                IS_ALT_PRESSED = false;
-                break;
-            case VK_WINDOWS:
-                if(!IS_WIN_PRESSED)
-                    return;
-                IS_WIN_PRESSED = false;
-        }
-        
-        robot.keyRelease(keycode);
+		try {
+			switch (keycode) {
+			case VK_SHIFT:
+				if (!IS_SHIFT_PRESSED)
+					return;
+				IS_SHIFT_PRESSED = false;
+				break;
+			case VK_CONTROL:
+				if (!IS_CTRL_PRESSED)
+					return;
+				IS_CTRL_PRESSED = false;
+				break;
+			case VK_ALT:
+				if (!IS_ALT_PRESSED)
+					return;
+				IS_ALT_PRESSED = false;
+				break;
+			case VK_WINDOWS:
+				if (!IS_WIN_PRESSED)
+					return;
+				IS_WIN_PRESSED = false;
+			}
+
+			robot.keyRelease(keycode);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
     
     /**

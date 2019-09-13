@@ -10,6 +10,10 @@ import java.awt.Label;
 import java.awt.TextArea;
 import java.awt.TextField;
 
+import javax.swing.JFrame;
+
+import com.codeforwin.projects.onscreenkeyboard.KeyboardUI;
+
 @SuppressWarnings("serial")
 public class CaptureDialog extends Dialog {
 			
@@ -19,6 +23,8 @@ public class CaptureDialog extends Dialog {
 	private TextField addressField = null;
 	private TextArea messageText = null;
 	private String attachment = null;
+	
+	KeyboardUI keyboard; //.setVisible(true);
 	
 	public CaptureDialog(Frame frame) {
 		super(frame);
@@ -60,6 +66,21 @@ public class CaptureDialog extends Dialog {
 				ex.printStackTrace();
 			}
 		});
+		
+		Button showKeyBoardButton = new Button("Keyboard");
+		showKeyBoardButton.addActionListener(e -> {
+			try {
+				if (keyboard != null) {
+					keyboard.setVisible(!keyboard.isVisible());
+					keyboard.setState(JFrame.NORMAL);
+					keyboard.toFront();
+					
+					addressField.transferFocus();
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 
 		add(addressLabel);
 		add(addressField);
@@ -69,11 +90,29 @@ public class CaptureDialog extends Dialog {
 		
 		add(sendButton);
 		add(cancelButton);
+		add(showKeyBoardButton);
 
 		pack();
 		setLayout(new FlowLayout(10, 10, 5));		
-		setSize(width, heigh);		
+		setSize(width, heigh);	
+		
 		setVisible(false);
+		
+		try {
+			keyboard = new KeyboardUI();
+			keyboard.setVisible(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void setVisible(boolean b) {
+		super.setVisible(b);
+		
+		if (keyboard != null) {
+			keyboard.setVisible(b);
+		}
 	}
 	
 	public void sendEmail(Dimension dimension, String attachment) {
@@ -85,8 +124,8 @@ public class CaptureDialog extends Dialog {
 			this.attachment = attachment;
 			setLocation((dimension.width / 5) * 2, (dimension.height / 6) * 2);
 			setVisible(true);
-			toFront();
-						
+			toFront();		
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

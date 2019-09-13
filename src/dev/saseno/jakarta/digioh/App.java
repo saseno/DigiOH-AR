@@ -205,23 +205,28 @@ public class App extends GlSketch {
 			camera.open();
 		}
 		
-		captureDialog = new CaptureDialog(frame);
-		captureDialog.addWindowFocusListener(new WindowFocusListener() {
-			
-			@Override
-			public void windowLostFocus(WindowEvent e) {
-				try {
-					isFilterActive = false;
-					captureDialog.setVisible(false);
-				} catch (Exception ex) {
+		try {
+
+			captureDialog = new CaptureDialog(frame);
+			captureDialog.addWindowFocusListener(new WindowFocusListener() {
+
+				@Override
+				public void windowLostFocus(WindowEvent e) {
+					try {
+						isFilterActive = false;
+						captureDialog.setVisible(false);
+					} catch (Exception ex) {
+					}
 				}
-			}
-			
-			@Override
-			public void windowGainedFocus(WindowEvent e) {
-				isFilterActive = true;
-			}
-		});
+
+				@Override
+				public void windowGainedFocus(WindowEvent e) {
+					isFilterActive = true;
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void updateRotation() {
