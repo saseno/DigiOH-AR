@@ -110,7 +110,7 @@ public class CaptureDialog extends Dialog {
 	public void setVisible(boolean b) {
 		super.setVisible(b);
 		
-		if (keyboard != null) {
+		if (keyboard != null && !b) {
 			keyboard.setVisible(b);
 		}
 	}
@@ -121,6 +121,10 @@ public class CaptureDialog extends Dialog {
 			addressField.setText("");
 			messageText.setText("");
 
+			if (keyboard != null) {
+				keyboard.setVisible(false);
+			}
+			
 			this.attachment = attachment;
 			setLocation((dimension.width / 5) * 2, (dimension.height / 6) * 2);
 			setVisible(true);
