@@ -107,8 +107,7 @@ public class KeyboardUI extends javax.swing.JFrame {
 				KeyboardUI.this.setState(JFrame.NORMAL);
 			}
 			
-		});
-		
+		});		
 	}
 	
 	private void initKeys() {
