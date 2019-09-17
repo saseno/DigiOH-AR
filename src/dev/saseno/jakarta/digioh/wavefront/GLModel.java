@@ -17,6 +17,7 @@ public abstract class GLModel {
 	private List<Coords> normals = new ArrayList<>();
 	private List<Coords> texCoords = new ArrayList<>();
 	
+	protected List<String> texturesName = new ArrayList<>();
 	protected List<Face> faces = new ArrayList<>();	
 	private Texture texture = null;
 
@@ -60,6 +61,13 @@ public abstract class GLModel {
 					texCoords.add(parseTexCoord(tokens));
 					break;
 
+				case "usemtl":
+					//System.err.println("--> material: " + tokens[1]);
+					if (tokens.length > 1) {
+						texturesName.add(tokens[1]);
+					}
+					break;
+
 				}
 			}
 			
@@ -98,7 +106,6 @@ public abstract class GLModel {
 		        
 				texture.enable(gl);
 				texture.bind(gl);
-
 				
 				gl.glEnable(GL2.GL_TEXTURE_2D);
 				gl.glEnable(GL2.GL_LIGHT0);

@@ -30,6 +30,7 @@ import dev.saseno.jakarta.digioh.io.utils.NyARGlRender;
 import dev.saseno.jakarta.digioh.jogl2.GlSketch;
 import dev.saseno.jakarta.digioh.obj.Client;
 import dev.saseno.jakarta.digioh.obj.Earth;
+import dev.saseno.jakarta.digioh.obj.House;
 import dev.saseno.jakarta.digioh.obj.Love;
 import dev.saseno.jakarta.digioh.obj.Mario;
 import dev.saseno.jakarta.digioh.obj.Mars;
@@ -76,6 +77,8 @@ public class App extends GlSketch {
 	private Client modelClient 	= null;
 	private Plane modelPlane	= null;
 	private Mario modelMario	= null;
+	
+	private House modelHouse 	= null;
 
 	private NyARBufferedImageRaster testImg = null;
 	private BufferedImage img = null;
@@ -132,6 +135,8 @@ public class App extends GlSketch {
 		modelClient = new Client();
 		modelPlane 	= new Plane();
 		modelMario 	= new Mario();
+		
+		modelHouse 	= new House();
 	}
 
 	private void initCameraDimension() {
@@ -254,7 +259,7 @@ public class App extends GlSketch {
 	}
 
 	public void draw(GL gl) throws Exception {
-		synchronized (camera) {
+		//synchronized (camera) {
 		try {
 
 			updateRotation();
@@ -325,7 +330,7 @@ public class App extends GlSketch {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		}
+		//}
 	}
 	
 	private void darkBackground(GL gl) {
