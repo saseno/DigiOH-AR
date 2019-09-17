@@ -97,6 +97,8 @@ public class App extends GlSketch {
 	private CaptureDialog captureDialog;
 	
 	private boolean isFilterActive = false;
+	private int countDownPosX = 0;
+	private int leftToRight = 1;
 	
 	public App(int i_width, int i_height, boolean useCamera) {
 		super(i_width, i_height);
@@ -227,6 +229,8 @@ public class App extends GlSketch {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		countDownPosX = (monitorDimension.width / 10) * 3;
 	}
 
 	private void updateRotation() {
@@ -265,34 +269,8 @@ public class App extends GlSketch {
 			render.drawBackground(gl, sensor.getSourceImage(), isMirrored(), monitorDimension.getWidth(), monitorDimension.getHeight());			
 			
 			if (isFilterActive) {
-
-				gl.glEnable(GL2.GL_BLEND);
-				gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+				darkBackground(gl);
 				
-		        gl.glEnable(GL2.GL_TEXTURE_2D);
-		        gl.glEnable(GL2.GL_LIGHT0);
-		        gl.glDisable(GL2.GL_LIGHTING); 
-				
-				gl.getGL2().glMatrixMode(GL2.GL_PROJECTION);
-				gl.getGL2().glPushMatrix();
-				gl.getGL2().glLoadIdentity();
-				
-				gl.getGL2().glOrtho(-100.0, monitorDimension.getWidth(), 0.0, monitorDimension.getHeight(), 0, 1);
-				
-				gl.getGL2().glMatrixMode(GL2.GL_MODELVIEW);
-				gl.getGL2().glPushMatrix();
-				gl.getGL2().glLoadIdentity();
-				
-				gl.getGL2().glBegin(GL2.GL_POLYGON);
-
-				gl.getGL2().glColor4f(0.3f, 0.3f, 0.3f, 0.4f);
-				gl.getGL2().glVertex3d(-100, -100, 0);
-				gl.getGL2().glVertex3d(monitorDimension.getWidth(), -100, 0);
-				gl.getGL2().glVertex3d(monitorDimension.getWidth(), monitorDimension.getHeight(), 0);
-				gl.getGL2().glVertex3d(-100, monitorDimension.getHeight(), 0);				
-				
-				gl.getGL2().glEnd();
-								 
 			} else {
 				
 				render.loadARProjectionMatrix(gl, isMirrored());
@@ -316,21 +294,25 @@ public class App extends GlSketch {
 						// System.err.println("--> captured...");
 						startCaptureScreen = -1;
 						saveScreenShot(gl);
+						//countDownPosX = (monitorDimension.width / 10) * 2;
 
-					} else if (startCaptureScreen > 0) {
-
+					} else if (startCaptureScreen > 0) {	
+						
 						gl.getGL2().glDisable(GL2.GL_TEXTURE_2D);
 						textRenderer.beginRendering(monitorDimension.width, monitorDimension.height);
 						textRenderer.setColor(1.0f, 0.2f, 0.2f, 0.8f);
-						textRenderer.draw("" + startCaptureScreen, (monitorDimension.width / 10) * 3,
+						textRenderer.draw("" + startCaptureScreen, countDownPosX,
 								(monitorDimension.height / 7) * 1);
 						textRenderer.endRendering();
 
+						//countDownPosX += (70 * leftToRight);					
 					}
 
 					if ((System.currentTimeMillis() - startCaptureScreenTime >= 1200)) {
 						startCaptureScreen--;
 						startCaptureScreenTime = System.currentTimeMillis();
+						//countDownPosX = (monitorDimension.width / 10) * 2;
+						//leftToRight *= -1;
 					}
 				}
 
@@ -344,6 +326,41 @@ public class App extends GlSketch {
 			e.printStackTrace();
 		}
 		}
+	}
+	
+	private void darkBackground(GL gl) {
+		try {
+
+			gl.glEnable(GL2.GL_BLEND);
+			gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+			
+	        gl.glEnable(GL2.GL_TEXTURE_2D);
+	        gl.glEnable(GL2.GL_LIGHT0);
+	        gl.glDisable(GL2.GL_LIGHTING); 
+			
+			gl.getGL2().glMatrixMode(GL2.GL_PROJECTION);
+			gl.getGL2().glPushMatrix();
+			gl.getGL2().glLoadIdentity();
+			
+			gl.getGL2().glOrtho(-100.0, monitorDimension.getWidth(), 0.0, monitorDimension.getHeight(), 0, 1);
+			
+			gl.getGL2().glMatrixMode(GL2.GL_MODELVIEW);
+			gl.getGL2().glPushMatrix();
+			gl.getGL2().glLoadIdentity();
+			
+			gl.getGL2().glBegin(GL2.GL_POLYGON);
+
+			gl.getGL2().glColor4f(0.3f, 0.3f, 0.3f, 0.4f);
+			gl.getGL2().glVertex3d(-100, -100, 0);
+			gl.getGL2().glVertex3d(monitorDimension.getWidth(), -100, 0);
+			gl.getGL2().glVertex3d(monitorDimension.getWidth(), monitorDimension.getHeight(), 0);
+			gl.getGL2().glVertex3d(-100, monitorDimension.getHeight(), 0);				
+			
+			gl.getGL2().glEnd();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 	}
 	
 	private void renderModelIfExist(GL gl, int markerId, GLModel model, double i_x, double i_y, double i_z) {

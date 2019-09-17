@@ -148,13 +148,13 @@ public class CaptureDialog extends Dialog {
 		add(messageText, c);
 		
 		try {
-			
+						
 			Image image = ImageIO.read(imageNotFound);
 			imageIcon = new ImageIcon(image);
 
 			labelImage.setIcon(imageIcon);
 			labelImage.setPreferredSize(initDimension);
-
+			
 			c.insets = new Insets(5, 1, 5, 1);
 			c.fill = GridBagConstraints.BOTH;
 			c.gridwidth = 3;
@@ -225,7 +225,7 @@ public class CaptureDialog extends Dialog {
 	public static void main(String[] input) {
 		Frame frame = new Frame();
 		CaptureDialog cd = new CaptureDialog(frame);
-		cd.sendEmail(Toolkit.getDefaultToolkit().getScreenSize(), "photos/DigiOH-AR_20190917_100928.png");		
+		cd.sendEmail(Toolkit.getDefaultToolkit().getScreenSize(), "data/no-image.png");		
 	}
 	
 }
