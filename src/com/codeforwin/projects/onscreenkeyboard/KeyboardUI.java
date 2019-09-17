@@ -499,6 +499,7 @@ public class KeyboardUI extends javax.swing.JFrame {
 		keyminus = new javax.swing.JLabel();
 		keyequal = new javax.swing.JLabel();
 		keybackspace = new javax.swing.JLabel();
+		
 		alphabetPanel = new javax.swing.JPanel();
 		keytab = new javax.swing.JLabel();
 		keyq = new javax.swing.JLabel();
@@ -597,7 +598,7 @@ public class KeyboardUI extends javax.swing.JFrame {
 		numericpadCombobox.setEnabled(false);
 		numericpadCombobox.setVisible(false);
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
 		setTitle("On-Screen Keyboard");
 		setAlwaysOnTop(true);
 		setAutoRequestFocus(false);
