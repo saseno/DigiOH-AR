@@ -137,7 +137,8 @@ public class ScreenResSelector {
 		public SelectionDialog() {
 			super();
 
-			setTitle("Display Modes");
+			setTitle("DigiOH-AR");
+			setIconImage((new ImageIcon(getClass().getResource("/photos-icon.png"))).getImage());
 			modes = getAvailableDisplayModes();
 			String[] strings = modesToString(modes);
 			
@@ -151,8 +152,8 @@ public class ScreenResSelector {
 			
 			JPanel panel = new JPanel();
 			panel.setLayout(new BorderLayout());
-			panel.add(new JLabel("Select full-screen display mode,"), BorderLayout.NORTH);
-			panel.add(new JLabel("or Cancel for windowed mode:"), BorderLayout.CENTER);
+			panel.add(new JLabel(" Select full-screen display mode,"), BorderLayout.NORTH);
+			panel.add(new JLabel(" or Cancel to exit:"), BorderLayout.CENTER);
 			
 			getContentPane().add(BorderLayout.NORTH, panel);
 			getContentPane().add(BorderLayout.CENTER, scroller);
