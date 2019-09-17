@@ -1,0 +1,1 @@
+java -jar target/DigiOH-AR.jar
