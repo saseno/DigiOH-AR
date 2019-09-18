@@ -1,26 +1,12 @@
 package dev.saseno.jakarta.digioh.obj;
 
-import java.io.InputStream;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
 
-import de.javagl.obj.FloatTuple;
-import de.javagl.obj.Mtl;
-import de.javagl.obj.MtlReader;
-import de.javagl.obj.Obj;
-import de.javagl.obj.ObjData;
-import de.javagl.obj.ObjReader;
-import de.javagl.obj.ObjSplitting;
-import de.javagl.obj.ObjUtils;
 import dev.saseno.jakarta.digioh.wavefront.Face;
 import dev.saseno.jakarta.digioh.wavefront.GLModel;
 
@@ -38,81 +24,18 @@ public class House extends GLModel {
 
 		try {
 			textures.add(TextureIO.newTexture(getClass().getResourceAsStream("/obj/house/Ground_color.jpg"), true, "Ground"));
-			textures.add(TextureIO.newTexture(getClass().getResourceAsStream("/obj/house/ground_shadow.jpg"), true, "Ground_Shadow"));
-			textures.add(TextureIO.newTexture(getClass().getResourceAsStream("/obj/house/MillCat_color.jpg"), true, "Mill"));
-			
-			for (String textureName : texturesName) {
-				System.err.println("--> texture: " + textureName);
-			}
+//			textures.add(TextureIO.newTexture(getClass().getResourceAsStream("/obj/house/ground_shadow.jpg"), true, "Ground_Shadow"));
+//			textures.add(TextureIO.newTexture(getClass().getResourceAsStream("/obj/house/MillCat_color.jpg"), true, "Mill"));
+//			
+//			for (String textureName : texturesName) {
+//				System.err.println("--> texture: " + textureName);
+//			}
 			
 		} catch (Exception e) {
 			System.err.println("--> init Texture: " + e.getMessage());
 			e.printStackTrace();
 		}
-		
-		try {
-
-			// Read an OBJ file
-			InputStream objInputStream = getClass().getResourceAsStream("/obj/house/Mill.obj");
-			Obj originalObj = ObjReader.read(objInputStream);
-
-			// Convert the OBJ into a "renderable" OBJ.
-			// (See ObjUtils#convertToRenderable for details)
-			Obj obj = ObjUtils.convertToRenderable(originalObj);
-
-			// The OBJ may refer to multiple MTL files using the "mtllib"
-			// directive. Each MTL file may contain multiple materials.
-			// Here, all materials (in form of Mtl objects) are collected.
-			List<Mtl> allMtls = new ArrayList<Mtl>();
-			
-			for (String mtlFileName : obj.getMtlFileNames()) {
 				
-				InputStream mtlInputStream = null;
-				System.err.println("--> mtlFileName: " + mtlFileName);
-				
-				if (mtlFileName.equals("Ground")) {
-					mtlInputStream = getClass().getResourceAsStream("/obj/house/Ground_color.jpg");
-					
-				} else if (mtlFileName.equals("Ground_Shadow")) {
-					mtlInputStream = getClass().getResourceAsStream("/obj/house/ground_shadow.jpg");
-					
-				} else if (mtlFileName.equals("Mill")) {
-					mtlInputStream = getClass().getResourceAsStream("/obj/house/MillCat_color.jpg");
-					
-				} else {
-					System.err.println("--> mtlFileName: " + mtlFileName);
-				}
-				
-				if (mtlInputStream != null) {
-					List<Mtl> mtls = MtlReader.read(mtlInputStream);
-					allMtls.addAll(mtls);
-				}
-			}
-
-			// Split the OBJ into multiple parts. Each key of the resulting
-			// map will be the name of one material. Each value will be
-			// an OBJ that contains the OBJ data that has to be rendered
-			// with this material.
-			Map<String, Obj> materialGroups = ObjSplitting.splitByMaterialGroups(obj);
-
-			for (Entry<String, Obj> entry : materialGroups.entrySet()) {
-				String materialName = entry.getKey();
-				Obj materialGroup = entry.getValue();
-
-				// System.out.println("Material name : " + materialName);
-				// System.out.println("Material group : " + materialGroup);
-
-				// Find the MTL that defines the material with the current name
-				Mtl mtl = findMtlForName(allMtls, materialName);
-
-				// Render the current material group with this material:
-				if (mtl != null) {
-					sendToRenderer(mtl, materialGroup);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -189,37 +112,5 @@ public class House extends GLModel {
 			//e.printStackTrace();
 			System.err.println("--> initTexture: " + e.getMessage());
 		}
-	}
-	
-	@SuppressWarnings("unused")
-	private static void sendToRenderer(Mtl mtl, Obj obj) {
-		// Extract the relevant material properties. These properties can
-		// be used to set up the renderer. For example, they may be passed
-		// as uniform variables to a shader
-		FloatTuple diffuseColor = mtl.getKd();
-		FloatTuple specularColor = mtl.getKs();
-		// ...
-
-		// Extract the geometry data. This data can be used to create
-		// the vertex buffer objects and vertex array objects for OpenGL
-		IntBuffer indices = ObjData.getFaceVertexIndices(obj);
-		FloatBuffer vertices = ObjData.getVertices(obj);
-		FloatBuffer texCoords = ObjData.getTexCoords(obj, 2);
-		FloatBuffer normals = ObjData.getNormals(obj);
-		// ...
-
-		// Print some information about the object that would be rendered
-		System.out.println("Rendering an object with " + (indices.capacity() / 3) + " triangles with " + mtl.getName()
-				+ ", having diffuse color " + diffuseColor);
-
-	}
-	
-	private static Mtl findMtlForName(Iterable<? extends Mtl> mtls, String name) {
-		for (Mtl mtl : mtls) {
-			if (mtl.getName().equals(name)) {
-				return mtl;
-			}
-		}
-		return null;
 	}
 }

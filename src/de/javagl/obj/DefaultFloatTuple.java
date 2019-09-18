@@ -32,7 +32,7 @@ import java.util.Arrays;
 /**
  * Default implementation of a {@link FloatTuple}
  */
-final class DefaultFloatTuple implements FloatTuple {
+public final class DefaultFloatTuple implements FloatTuple {
 	/**
 	 * The values of this tuple
 	 */
@@ -104,7 +104,7 @@ final class DefaultFloatTuple implements FloatTuple {
 	 * @param f The {@link FloatTuple}
 	 * @return The values
 	 */
-	private static float[] getValues(FloatTuple f) {
+	public static float[] getValues(FloatTuple f) {
 		if (f instanceof DefaultFloatTuple) {
 			DefaultFloatTuple other = (DefaultFloatTuple) f;
 			return other.values.clone();

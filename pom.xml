@@ -23,6 +23,14 @@
 	</properties>
 	
 	<dependencies>
+
+		<dependency>
+			<groupId>javax.vecmath</groupId>
+			<artifactId>vecmath</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}\lib\vecmath-1.5.2.jar</systemPath>
+		    <version>1.5.2</version>
+		</dependency>
 	
 		<!-- https://mvnrepository.com/artifact/javax.activation/activation -->
 		<dependency>
@@ -219,7 +227,7 @@
 											
 						<manifestEntries>
 							<!-- <Class-Path>.</Class-Path> -->
-							<Class-Path>. lib/NyARToolkit-0.0.1-SNAPSHOT.jar lib/jogl-all-2.3.2.jar lib/bridj-0.6.2.jar lib/slf4j-api-1.7.2.jar lib/webcam-capture-0.3.12.jar lib/gluegen-rt-2.3.2.jar lib/jogl-all-natives-windows-i586-0.0.1-SNAPSHOT.jar lib/jogl-all-natives-windows-amd64-0.0.1-SNAPSHOT.jar lib/javax.mail-1.6.0.jar lib/slf4j-simple-1.7.28.jar lib/activation-1.1.1.jar lib/restfb-2.24.1.jar</Class-Path>
+							<Class-Path>. lib/vecmath-1.5.2.jar lib/NyARToolkit-0.0.1-SNAPSHOT.jar lib/jogl-all-2.3.2.jar lib/bridj-0.6.2.jar lib/slf4j-api-1.7.2.jar lib/webcam-capture-0.3.12.jar lib/gluegen-rt-2.3.2.jar lib/jogl-all-natives-windows-i586-0.0.1-SNAPSHOT.jar lib/jogl-all-natives-windows-amd64-0.0.1-SNAPSHOT.jar lib/javax.mail-1.6.0.jar lib/slf4j-simple-1.7.28.jar lib/activation-1.1.1.jar lib/restfb-2.24.1.jar</Class-Path>
 						</manifestEntries>
 						
 					</archive>	

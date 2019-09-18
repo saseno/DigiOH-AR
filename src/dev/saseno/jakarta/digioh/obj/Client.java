@@ -27,19 +27,21 @@ public class Client extends GLModel {
 	@Override
 	public void draw(GL i_gl, double rotate) {
 		
-		i_gl.getGL2().getGL2().glRotated(90, 0, 0, 1);
-
-		if (rotate > 0) {
-			i_gl.getGL2().getGL2().glRotated(rotate, 0, 1, 0);
-		}
+//		i_gl.getGL2().getGL2().glRotated(90, 0, 0, 1);
+//
+//		if (rotate > 0) {
+//			i_gl.getGL2().getGL2().glRotated(rotate, 0, 1, 0);
+//		}
+//		
+//		initTexture(i_gl.getGL2());
+//		
+//		for (Face face : faces) {
+//			face.draw(i_gl, fSize);
+//		}
+//		
+//		disabledTexture(i_gl.getGL2());	
 		
-		initTexture(i_gl.getGL2());
-		
-		for (Face face : faces) {
-			face.draw(i_gl, fSize);
-		}
-		
-		disabledTexture(i_gl.getGL2());		
+		drawVer02(i_gl);
 	}
 
 	@Override

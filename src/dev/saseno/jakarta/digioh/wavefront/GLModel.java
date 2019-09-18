@@ -1,15 +1,34 @@
 package dev.saseno.jakarta.digioh.wavefront;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
+
+import de.javagl.obj.DefaultFloatTuple;
+import de.javagl.obj.FloatTuple;
+import de.javagl.obj.Mtl;
+import de.javagl.obj.MtlReader;
+import de.javagl.obj.Obj;
+import de.javagl.obj.ObjData;
+import de.javagl.obj.ObjReader;
+import de.javagl.obj.ObjSplitting;
+import de.javagl.obj.ObjUtils;
 
 public abstract class GLModel {
 
@@ -34,6 +53,10 @@ public abstract class GLModel {
 	protected float high_shininess 		= 100.0f;
 	
 	protected float[] mat_emission 		= { 0.3f, 0.2f, 0.2f, 0.0f };
+	
+	protected Obj renderableObj = null;
+	protected Map<String, Obj> materialGroups = null;
+	protected List<Mtl> allMtls = new ArrayList<>();
 	
 	public GLModel(String objectName, String textureName) {
 		try {
@@ -90,6 +113,8 @@ public abstract class GLModel {
 			System.err.println("--> init Texture: " + e.getMessage());
 			e.printStackTrace();
 		}
+		
+		readObj(objectName);
 	}
 
 	public abstract void draw(com.jogamp.opengl.GL i_gl, double rotate);
@@ -106,7 +131,7 @@ public abstract class GLModel {
 		        
 				texture.enable(gl);
 				texture.bind(gl);
-				
+								
 				gl.glEnable(GL2.GL_TEXTURE_2D);
 				gl.glEnable(GL2.GL_LIGHT0);
 				gl.glEnable(GL2.GL_LIGHTING);
@@ -255,5 +280,163 @@ public abstract class GLModel {
 
 		// result = (v2 - v1) X (v3 - v1)
 		return Coords.cross(a, b).normalize();
+	}
+	
+	protected void readObj(String objectName) {
+
+		try {
+			
+			// Read an OBJ file
+			InputStream objInputStream = getClass().getResourceAsStream(objectName);
+			Obj originalObj = ObjReader.read(objInputStream);
+
+			// Convert the OBJ into a "renderable" OBJ.
+			// (See ObjUtils#convertToRenderable for details)
+			renderableObj = ObjUtils.convertToRenderable(originalObj);
+
+			// The OBJ may refer to multiple MTL files using the "mtllib"
+			// directive. Each MTL file may contain multiple materials.
+			// Here, all materials (in form of Mtl objects) are collected.
+			allMtls = new ArrayList<Mtl>();
+			
+			for (String mtlFileName : renderableObj.getMtlFileNames()) {
+				
+				URL objUrl = getClass().getResource(objectName);
+				Path objPath = Paths.get(objUrl.toURI());				
+				File file = Paths.get("" + objPath.getParent(), mtlFileName).toFile();
+				
+				InputStream mtlInputStream = null;
+				//System.err.println("--> mtlFileName: " + file.getPath());
+				
+				if (file.exists()) {
+					mtlInputStream = new FileInputStream(file);
+				}
+				
+				if (mtlInputStream != null) {
+					List<Mtl> mtls = MtlReader.read(mtlInputStream);
+					allMtls.addAll(mtls);
+				}
+			}
+
+			System.err.println("---------------------");
+			System.err.println(objectName);
+			System.err.println("---------------------");
+
+			// Split the OBJ into multiple parts. Each key of the resulting
+			// map will be the name of one material. Each value will be
+			// an OBJ that contains the OBJ data that has to be rendered
+			// with this material.
+			materialGroups = ObjSplitting.splitByMaterialGroups(renderableObj);
+
+			for (Entry<String, Obj> entry : materialGroups.entrySet()) {
+				String materialName = entry.getKey();
+				Obj materialGroup = entry.getValue();
+
+				// System.out.println("Material name : " + materialName);
+				// System.out.println("Material group : " + materialGroup);
+
+				// Find the MTL that defines the material with the current name
+				Mtl mtl = findMtlForName(allMtls, materialName);
+
+				// Render the current material group with this material:
+				sendToRenderer(mtl, materialGroup, materialName);				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	protected void sendToRenderer(Mtl mtl, Obj obj, String materialName) {
+		
+		// Extract the relevant material properties. These properties can
+		// be used to set up the renderer. For example, they may be passed
+		// as uniform variables to a shader
+		FloatTuple diffuseColor = null;
+		FloatTuple specularColor = null;
+		if (mtl != null) {
+			diffuseColor = mtl.getKd();
+			specularColor = mtl.getKs();
+		}
+		// ...
+
+		// Extract the geometry data. This data can be used to create
+		// the vertex buffer objects and vertex array objects for OpenGL
+		IntBuffer indices = ObjData.getFaceVertexIndices(obj);
+		FloatBuffer vertices = ObjData.getVertices(obj);
+		FloatBuffer texCoords = ObjData.getTexCoords(obj, 2);
+		FloatBuffer normals = ObjData.getNormals(obj);
+		// ...
+		
+		String matName = materialName;
+		if(mtl != null) {
+			matName = mtl.getName();
+		}
+
+		// Print some information about the object that would be rendered
+		System.err.println("Object with " + (indices.capacity() / 3) 
+				+ " triangles " + matName + ", diffuse color "
+				+ diffuseColor + ", specular color " + specularColor);
+
+	}
+	
+	protected void drawVer02(com.jogamp.opengl.GL i_gl) {
+		
+		GL2 gl = i_gl.getGL2();	        
+		materialGroups = ObjSplitting.splitByMaterialGroups(renderableObj);		
+		
+		for (Entry<String, Obj> entry : materialGroups.entrySet()) {
+
+			String materialName = entry.getKey();
+			Obj materialGroup = entry.getValue();
+			Mtl mtl = findMtlForName(allMtls, materialName);
+			
+			FloatTuple diffuseColor = null;
+			FloatTuple specularColor = null;
+			
+			if (mtl != null) {
+				diffuseColor = mtl.getKd();
+				specularColor = mtl.getKs();
+
+				gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, DefaultFloatTuple.getValues(specularColor), 0);
+				gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, DefaultFloatTuple.getValues(diffuseColor), 0);
+			}
+
+			IntBuffer indices = ObjData.getFaceVertexIndices(materialGroup);
+			FloatBuffer vertices = ObjData.getVertices(materialGroup);
+			FloatBuffer texCoords = ObjData.getTexCoords(materialGroup, 2);
+			FloatBuffer normals = ObjData.getNormals(materialGroup);
+
+			gl.glBegin(GL2.GL_QUADS);
+			
+			gl.glIndexiv(indices);
+			gl.glNormal3fv(normals);
+			gl.glTexCoord2fv(texCoords);
+			gl.glVertex3fv(vertices);
+			
+			gl.glEnd();
+
+			/*
+			String matName = materialName;
+			if(mtl != null) {
+				matName = mtl.getName();
+			}
+
+			System.err.println("Object with " + (indices.capacity() / 3) 
+					+ " triangles " + matName + ", diffuse color "
+					+ diffuseColor + ", specular color " + specularColor);
+			*/			
+		}		
+
+	}
+	
+	protected Mtl findMtlForName(Iterable<? extends Mtl> mtls, String name) {
+		for (Mtl mtl : mtls) {
+			if (mtl.getName().equals(name)) {
+				return mtl;
+			}
+		}
+		return null;
 	}
 }
