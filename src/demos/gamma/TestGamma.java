@@ -52,80 +52,78 @@ import com.jogamp.opengl.util.Gamma;
 
 import demos.gears.Gears;
 
-
-
 public class TestGamma implements GLEventListener {
-  private static void usage() {
-    System.out.println("Usage: java TestGamma [gamma value] [brightness value] [contrast value]");
-    System.exit(1);
-  }
+	private static void usage() {
+		System.out.println("Usage: java TestGamma [gamma value] [brightness value] [contrast value]");
+		System.exit(1);
+	}
 
-  @Override
-public void init(GLAutoDrawable drawable) {
-    if (!Gamma.setDisplayGamma(drawable, gamma, brightness, contrast)) {
-      System.err.println("Unable to change display gamma, brightness, and contrast");
-    }
-    System.err.println("init: Gamma.setDisplayGamma");
-  }
+	@Override
+	public void init(GLAutoDrawable drawable) {
+		if (!Gamma.setDisplayGamma(drawable, gamma, brightness, contrast)) {
+			System.err.println("Unable to change display gamma, brightness, and contrast");
+		}
+		System.err.println("init: Gamma.setDisplayGamma");
+	}
 
-  @Override
-public void dispose(GLAutoDrawable drawable) {
-    Gamma.resetDisplayGamma(drawable);
-    System.err.println("dispose: Gamma.resetDisplayGamma");
-  }
+	@Override
+	public void dispose(GLAutoDrawable drawable) {
+		Gamma.resetDisplayGamma(drawable);
+		System.err.println("dispose: Gamma.resetDisplayGamma");
+	}
 
-  @Override
-public void display(GLAutoDrawable drawable) {
-  }
+	@Override
+	public void display(GLAutoDrawable drawable) {
+	}
 
-  @Override
-public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-  }
+	@Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+	}
 
-  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
-  }
+	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+	}
 
-  public static void main(String[] args) {
-    if (args.length != 3) {
-      usage();
-    }
+	public static void main(String[] args) {
+		if (args.length != 3) {
+			usage();
+		}
 
-    try {
-      gamma = Float.parseFloat(args[0]);
-      brightness = Float.parseFloat(args[1]);
-      contrast = Float.parseFloat(args[2]);
-    } catch (NumberFormatException e) {
-      usage();
-    }
+		try {
+			gamma = Float.parseFloat(args[0]);
+			brightness = Float.parseFloat(args[1]);
+			contrast = Float.parseFloat(args[2]);
+		} catch (NumberFormatException e) {
+			usage();
+		}
 
-    Frame frame = new Frame("Gear and Gamma Demo");
-    GLCanvas canvas = new GLCanvas();
-    canvas.addGLEventListener(new Gears());
-    canvas.addGLEventListener(new TestGamma());
-    frame.add(canvas);
-    frame.setSize(300, 300);
-    final Animator animator = new Animator(canvas);
-    frame.addWindowListener(new WindowAdapter() {
-        @Override
-		public void windowClosing(WindowEvent e) {
-          // Run this on another thread than the AWT event queue to
-          // make sure the call to Animator.stop() completes before
-          // exiting
-          new Thread(new Runnable() {
-              @Override
-			public void run() {
-                animator.stop();
-                System.exit(0);
-              }
-            }).start();
-        }
-      });
-    frame.setVisible(true);
-    animator.start();
+		Frame frame = new Frame("Gear and Gamma Demo");
+		GLCanvas canvas = new GLCanvas();
+		canvas.addGLEventListener(new Gears());
+		canvas.addGLEventListener(new TestGamma());
+		frame.add(canvas);
+		frame.setSize(300, 300);
+		final Animator animator = new Animator(canvas);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				// Run this on another thread than the AWT event queue to
+				// make sure the call to Animator.stop() completes before
+				// exiting
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						animator.stop();
+						System.exit(0);
+					}
+				}).start();
+			}
+		});
+		frame.setVisible(true);
+		animator.start();
 
-  }
+	}
 
-    static float gamma = 1.0f;
-    static float brightness = 0.0f;
-    static float contrast = 0.0f;
+	static float gamma = 1.0f;
+	static float brightness = 0.0f;
+	static float contrast = 0.0f;
 }

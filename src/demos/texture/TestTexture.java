@@ -67,163 +67,159 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
-
-
 /** Demonstrates simple use of the TextureIO texture loader. */
 
 public class TestTexture implements GLEventListener {
-  public static void main(String[] args) {
-    new TestTexture().run(args);
-  }
+	public static void main(String[] args) {
+		new TestTexture().run(args);
+	}
 
-  private File curDir;
+	private File curDir;
 
-  private void run(String[] args) {
-    JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+	private void run(String[] args) {
+		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
-    JFrame frame = new JFrame("Texture Loader Demo");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    final GLCanvas canvas = new GLCanvas();
+		JFrame frame = new JFrame("Texture Loader Demo");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		final GLCanvas canvas = new GLCanvas();
 
-    JMenuBar menuBar = new JMenuBar();
-    JMenu menu = new JMenu("File");
-    JMenuItem item = new JMenuItem("Open texture...");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          JFileChooser chooser = new JFileChooser(curDir);
-          int res = chooser.showOpenDialog(null);
-          if (res == JFileChooser.APPROVE_OPTION) {
-            File chosen = chooser.getSelectedFile();
-            if (chosen != null) {
-              curDir = chosen.getParentFile();
-              setTextureFile(chosen);
-              canvas.repaint();
-            }
-          }
-        }
-      });
-    item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-    menu.add(item);
+		JMenuBar menuBar = new JMenuBar();
+		JMenu menu = new JMenu("File");
+		JMenuItem item = new JMenuItem("Open texture...");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser(curDir);
+				int res = chooser.showOpenDialog(null);
+				if (res == JFileChooser.APPROVE_OPTION) {
+					File chosen = chooser.getSelectedFile();
+					if (chosen != null) {
+						curDir = chosen.getParentFile();
+						setTextureFile(chosen);
+						canvas.repaint();
+					}
+				}
+			}
+		});
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+		menu.add(item);
 
-    item = new JMenuItem("Flush texture");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          flushTexture();
-          canvas.repaint();
-        }
-      });
-    item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
-    menu.add(item);
+		item = new JMenuItem("Flush texture");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				flushTexture();
+				canvas.repaint();
+			}
+		});
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+		menu.add(item);
 
-    item = new JMenuItem("Exit");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          System.exit(0);
-        }
-      });
-    item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
-    menu.add(item);
+		item = new JMenuItem("Exit");
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK));
+		menu.add(item);
 
-    menuBar.add(menu);
+		menuBar.add(menu);
 
-    canvas.addGLEventListener(this);
-    frame.getContentPane().add(canvas);
-    frame.setJMenuBar(menuBar);
-    frame.setSize(800, 600);
-    frame.setVisible(true);
-  }
+		canvas.addGLEventListener(this);
+		frame.getContentPane().add(canvas);
+		frame.setJMenuBar(menuBar);
+		frame.setSize(800, 600);
+		frame.setVisible(true);
+	}
 
-  private boolean newTexture;
-  private boolean flushTexture;
-  private File file;
-  private Texture texture;
-  private GLU glu = new GLU();
+	private boolean newTexture;
+	private boolean flushTexture;
+	private File file;
+	private Texture texture;
+	private GLU glu = new GLU();
 
-  public void setTextureFile(File file) {
-    this.file = file;
-    newTexture = true;
-  }
+	public void setTextureFile(File file) {
+		this.file = file;
+		newTexture = true;
+	}
 
-  public void flushTexture() {
-    flushTexture = true;
-  }
+	public void flushTexture() {
+		flushTexture = true;
+	}
 
-  public void init(GLAutoDrawable drawable) {
+	public void init(GLAutoDrawable drawable) {
 
-    GL2 gl = drawable.getGL().getGL2();
-    drawable.setGL(new DebugGL2(gl.getGL2()));
+		GL2 gl = drawable.getGL().getGL2();
+		drawable.setGL(new DebugGL2(gl.getGL2()));
 
-    gl.glClearColor(0, 0, 0, 0);
-    gl.glEnable(GL.GL_DEPTH_TEST);
-  }
+		gl.glClearColor(0, 0, 0, 0);
+		gl.glEnable(GL.GL_DEPTH_TEST);
+	}
 
-  public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-    GL2 gl = drawable.getGL().getGL2();
-    gl.glMatrixMode(GL2ES1.GL_PROJECTION);
-    gl.glLoadIdentity();
-    glu.gluOrtho2D(0, 1, 0, 1);
-    gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
-    gl.glLoadIdentity();
-  }
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+		GL2 gl = drawable.getGL().getGL2();
+		gl.glMatrixMode(GL2ES1.GL_PROJECTION);
+		gl.glLoadIdentity();
+		glu.gluOrtho2D(0, 1, 0, 1);
+		gl.glMatrixMode(GL2ES1.GL_MODELVIEW);
+		gl.glLoadIdentity();
+	}
 
-  public void dispose(GLAutoDrawable drawable) {
-  }
+	public void dispose(GLAutoDrawable drawable) {
+	}
 
-  public void display(GLAutoDrawable drawable) {
-    GL2 gl = drawable.getGL().getGL2();
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+	public void display(GLAutoDrawable drawable) {
+		GL2 gl = drawable.getGL().getGL2();
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-    if (flushTexture) {
-      flushTexture = false;
-      if (texture != null) {
-        texture.destroy(gl);
-        texture = null;
-      }
-    }
+		if (flushTexture) {
+			flushTexture = false;
+			if (texture != null) {
+				texture.destroy(gl);
+				texture = null;
+			}
+		}
 
-    if (newTexture) {
-      newTexture = false;
+		if (newTexture) {
+			newTexture = false;
 
-      if (texture != null) {
-        texture.destroy(gl);
-        texture = null;
-      }
+			if (texture != null) {
+				texture.destroy(gl);
+				texture = null;
+			}
 
-      try {
-        System.err.println("Loading texture...");
-        texture = TextureIO.newTexture(file, true);
-        System.err.println("Texture estimated memory size = " + texture.getEstimatedMemorySize());
-      } catch (IOException e) {
-        e.printStackTrace();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        e.printStackTrace(new PrintStream(bos));
-        JOptionPane.showMessageDialog(null,
-                                      bos.toString(),
-                                      "Error loading texture",
-                                      JOptionPane.ERROR_MESSAGE);
-        return;
-      }
-    }
+			try {
+				System.err.println("Loading texture...");
+				texture = TextureIO.newTexture(file, true);
+				System.err.println("Texture estimated memory size = " + texture.getEstimatedMemorySize());
+			} catch (IOException e) {
+				e.printStackTrace();
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				e.printStackTrace(new PrintStream(bos));
+				JOptionPane.showMessageDialog(null, bos.toString(), "Error loading texture", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
 
-    if (texture != null) {
-      texture.enable(gl);
-      texture.bind(gl);
-      gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
-      TextureCoords coords = texture.getImageTexCoords();
+		if (texture != null) {
+			texture.enable(gl);
+			texture.bind(gl);
+			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+			TextureCoords coords = texture.getImageTexCoords();
 
-      gl.glBegin(GL2.GL_QUADS);
-      gl.glTexCoord2f(coords.left(), coords.bottom());
-      gl.glVertex3f(0, 0, 0);
-      gl.glTexCoord2f(coords.right(), coords.bottom());
-      gl.glVertex3f(1, 0, 0);
-      gl.glTexCoord2f(coords.right(), coords.top());
-      gl.glVertex3f(1, 1, 0);
-      gl.glTexCoord2f(coords.left(), coords.top());
-      gl.glVertex3f(0, 1, 0);
-      gl.glEnd();
-      texture.disable(gl);
-    }
-  }
+			gl.glBegin(GL2.GL_QUADS);
+			gl.glTexCoord2f(coords.left(), coords.bottom());
+			gl.glVertex3f(0, 0, 0);
+			gl.glTexCoord2f(coords.right(), coords.bottom());
+			gl.glVertex3f(1, 0, 0);
+			gl.glTexCoord2f(coords.right(), coords.top());
+			gl.glVertex3f(1, 1, 0);
+			gl.glTexCoord2f(coords.left(), coords.top());
+			gl.glVertex3f(0, 1, 0);
+			gl.glEnd();
+			texture.disable(gl);
+		}
+	}
 
-  public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+	}
 }
