@@ -20,8 +20,12 @@ import javax.imageio.ImageIO;
 
 import com.github.sarxos.webcam.Webcam;
 import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.opengl.FBObject;
+import com.jogamp.opengl.FBObject.Attachment;
+import com.jogamp.opengl.FBObject.TextureAttachment;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import dev.saseno.jakarta.digioh.email.CaptureDialog;
@@ -29,6 +33,7 @@ import dev.saseno.jakarta.digioh.io.utils.NyARGlMarkerSystem;
 import dev.saseno.jakarta.digioh.io.utils.NyARGlRender;
 import dev.saseno.jakarta.digioh.jogl2.GlSketch;
 import dev.saseno.jakarta.digioh.obj.Client;
+import dev.saseno.jakarta.digioh.obj.CubeObject;
 import dev.saseno.jakarta.digioh.obj.Earth;
 import dev.saseno.jakarta.digioh.obj.House;
 import dev.saseno.jakarta.digioh.obj.Love;
@@ -123,6 +128,12 @@ public class App extends GlSketch {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		cubeInner = new CubeObject(false);
+		cubeMiddle = new CubeObject(true);
+		cubeOuter = new CubeObject(true);
+		fbo1 = new FBObject();
+		fbo2 = new FBObject();
 	}
 
 	private void initModel() {
@@ -182,8 +193,25 @@ public class App extends GlSketch {
 		}
 
 	}
-
+	
 	public void setup(GL gl) throws Exception {
+		//etupV01(gl);
+	}
+
+	@Override
+	public void init(GLAutoDrawable drawable) {
+		GL2 gl = drawable.getGL().getGL2();
+		fbo1.init(gl, FBO_SIZE, FBO_SIZE, 0);
+		fbo1.attachTexture2D(gl, 0, true);
+		fbo1.attachRenderbuffer(gl, Attachment.Type.DEPTH, 32);
+		fbo1.unbind(gl);
+		fbo2.init(gl, FBO_SIZE, FBO_SIZE, 0);
+		fbo2.attachTexture2D(gl, 0, true);
+		fbo2.attachRenderbuffer(gl, Attachment.Type.DEPTH, 32);
+		fbo2.unbind(gl);
+	}
+
+	public void setupV02(GL gl) throws Exception {
 		
 		NyARMarkerSystemConfig config = new NyARMarkerSystemConfig(monitorDimension.width, monitorDimension.height);
 		
@@ -259,6 +287,50 @@ public class App extends GlSketch {
 	}
 
 	public void draw(GL gl) throws Exception {
+		//drawV01(gl.getGL2());
+	}
+
+    @Override
+	public void display(GLAutoDrawable drawable) {
+    	 GL2 gl = drawable.getGL().getGL2();
+    	 
+        fbo1.bind(gl);
+        cubeInner.reshape(gl, 0, 0, FBO_SIZE, FBO_SIZE);
+        cubeInner.display(gl, xRot, yRot);
+        fbo1.unbind(gl);
+
+        FBObject tex = fbo1;
+        FBObject rend = fbo2;
+
+        int MAX_ITER = 1;
+
+        for (int i = 0; i < MAX_ITER; i++) {
+            rend.bind(gl);
+            gl.glEnable (GL.GL_TEXTURE_2D);
+            tex.use(gl, (TextureAttachment)tex.getColorbuffer(0));
+            cubeMiddle.reshape(gl, 0, 0, FBO_SIZE, FBO_SIZE);
+            cubeMiddle.display(gl, xRot, yRot);
+            tex.unuse(gl);
+            gl.glDisable (GL.GL_TEXTURE_2D);
+            rend.unbind(gl);
+            FBObject tmp = tex;
+            tex = rend;
+            rend = tmp;
+        }
+
+        cubeOuter.reshape(gl, x, y, width, height);
+
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        gl.glClearColor(90, 90, 120, 1);
+
+        gl.glEnable (GL.GL_TEXTURE_2D);
+        tex.use(gl, (TextureAttachment)tex.getColorbuffer(0));
+        cubeOuter.display(gl, xRot, yRot);
+        tex.unuse(gl);
+        gl.glDisable (GL.GL_TEXTURE_2D);
+	}
+	
+	public void drawV01(GL gl) throws Exception {
 		//synchronized (camera) {
 		try {
 
@@ -475,4 +547,30 @@ public class App extends GlSketch {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
+	
+	///////////////////////////////////////////
+
+	CubeObject cubeInner;
+	CubeObject cubeMiddle;
+	CubeObject cubeOuter;
+	FBObject fbo1;
+	FBObject fbo2;
+
+	int x, y, width, height;
+	float motionIncr;
+	float xRot, yRot;
+	
+	private static final int FBO_SIZE = 128;
+
+	@Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        cubeOuter.reshape(drawable.getGL().getGL2(), x, y, width, height);
+        motionIncr = 180.f / Math.max(width, height);
+	}
+
+
 }

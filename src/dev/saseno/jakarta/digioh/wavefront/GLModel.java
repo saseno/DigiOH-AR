@@ -282,6 +282,14 @@ public abstract class GLModel {
 		return Coords.cross(a, b).normalize();
 	}
 	
+	public Obj getRenderableObj() {
+		return renderableObj;
+	}
+	
+	public List<Mtl> getAllMtls() {
+		return allMtls;
+	}
+	
 	protected void readObj(String objectName) {
 
 		try {
@@ -431,7 +439,7 @@ public abstract class GLModel {
 
 	}
 	
-	protected Mtl findMtlForName(Iterable<? extends Mtl> mtls, String name) {
+	public Mtl findMtlForName(Iterable<? extends Mtl> mtls, String name) {
 		for (Mtl mtl : mtls) {
 			if (mtl.getName().equals(name)) {
 				return mtl;

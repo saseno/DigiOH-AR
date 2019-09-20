@@ -196,7 +196,7 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 //	}
 
 	@Override
-	public final void init(GLAutoDrawable drawable) {
+	public void init(GLAutoDrawable drawable) {
 		try {
 
 			System.err.println("------------------");
@@ -231,7 +231,7 @@ public abstract class GlSketch implements GLEventListener, KeyListener, MouseLis
 	}
 
 	@Override
-	public final void display(GLAutoDrawable drawable) {
+	public void display(GLAutoDrawable drawable) {
 		try {
 			if (_is_setup_done) {
 				draw(drawable.getGL());
